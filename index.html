@@ -22,13 +22,39 @@ body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); 
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
 /* ── Background ── */
+@keyframes aurora {
+  0% { transform: translate(0%, 0%) scale(1); opacity: 0.4; }
+  25% { transform: translate(5%, -10%) scale(1.1); opacity: 0.5; }
+  50% { transform: translate(-5%, 5%) scale(0.9); opacity: 0.3; }
+  75% { transform: translate(10%, -5%) scale(1.05); opacity: 0.45; }
+  100% { transform: translate(0%, 0%) scale(1); opacity: 0.4; }
+}
+
 .bg-layer {
   position:fixed; inset:0; z-index:-2;
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(124,154,255,0.04) 0%, transparent 55%),
-              radial-gradient(ellipse 40% 30% at 80% 85%, rgba(74,222,128,0.02) 0%, transparent 50%),
-              radial-gradient(ellipse 30% 25% at 20% 70%, rgba(245,200,66,0.015) 0%, transparent 45%);
+  overflow:hidden;
+}
+.bg-layer .aurora {
+  position:absolute; border-radius:50%; filter:blur(100px);
+  pointer-events:none;
+}
+.bg-layer .aurora:nth-child(1) {
+  width:600px; height:600px; top:-10%; left:-5%;
+  background:radial-gradient(circle, rgba(124,154,255,0.06), transparent);
+  animation:aurora 12s ease-in-out infinite;
+}
+.bg-layer .aurora:nth-child(2) {
+  width:500px; height:500px; bottom:-15%; right:-5%;
+  background:radial-gradient(circle, rgba(74,222,128,0.04), transparent);
+  animation:aurora 15s ease-in-out infinite reverse;
+}
+.bg-layer .aurora:nth-child(3) {
+  width:400px; height:400px; top:40%; left:60%;
+  background:radial-gradient(circle, rgba(245,200,66,0.03), transparent);
+  animation:aurora 18s ease-in-out infinite 3s;
 }
 canvas#particles { position:fixed; inset:0; z-index:-1; pointer-events:none; }
+.scroll-progress { position:fixed; top:0; left:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--green),var(--gold)); z-index:200; width:0%; transition:width 0.1s; }
 
 /* ── Container ── */
 .container { max-width: 820px; margin:0 auto; padding:0 28px; }
@@ -68,6 +94,18 @@ nav .inner { max-width:820px; width:100%; display:flex; justify-content:space-be
 .hero .sub { font-size:1.05em; color:var(--sub); max-width:520px; line-height:1.75; margin-bottom:32px; animation:fU 0.8s ease 0.2s both; }
 .hero .sub em { font-style:normal; color:var(--accent); font-weight:500; }
 .h-acts { display:flex; gap:12px; flex-wrap:wrap; animation:fU 0.8s ease 0.3s both; }
+
+/* ── Live ticker ── */
+.live-ticker {
+  display:inline-flex; align-items:center; gap:8px;
+  margin-top:20px; padding:6px 14px 6px 10px;
+  background:rgba(74,222,128,0.04); border:1px solid rgba(74,222,128,0.1);
+  border-radius:20px; font-size:0.72em; color:var(--dim);
+  animation:fU 0.8s ease 0.4s both; max-width:100%;
+}
+.lt-dot { width:5px; height:5px; background:var(--green); border-radius:50%; animation:pd 1.5s ease-in-out infinite; flex-shrink:0; }
+.lt-label { color:var(--dim); font-weight:500; flex-shrink:0; }
+.lt-text { color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 .btn {
   display:inline-flex; align-items:center; gap:7px; padding:12px 24px; border-radius:8px;
@@ -206,6 +244,21 @@ section { padding:100px 0; }
 .cl a { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; background:var(--card); border:1px solid var(--border); border-radius:8px; text-decoration:none; color:var(--sub); font-size:0.82em; font-weight:500; transition:all 0.25s; }
 .cl a:hover { border-color:var(--border2); color:var(--text); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.2); }
 
+/* ── Now Playing Widget ── */
+.np-widget {
+  margin-top:20px; background:var(--card); border:1px solid var(--border);
+  border-radius:var(--rad-sm); overflow:hidden; transition:border-color 0.2s;
+}
+.np-widget:hover { border-color:var(--border2); }
+.np-bar { height:2px; background:var(--border); }
+.np-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--green)); animation:npProgress 4s linear infinite; }
+@keyframes npProgress { 0%{width:0%} 100%{width:100%} }
+.np-inner { display:flex; align-items:center; gap:12px; padding:12px 18px; }
+.np-icon { font-size:0.75em; color:var(--green); flex-shrink:0; }
+.np-info { display:flex; flex-direction:column; gap:1px; overflow:hidden; }
+.np-label { font-size:0.6em; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim); font-weight:600; }
+.np-track { font-size:0.8em; color:var(--sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500; }
+
 /* ── Footer ── */
 footer { text-align:center; padding:48px 0 60px; border-top:1px solid var(--border); }
 footer p { font-size:0.78em; color:var(--dim); margin-bottom:4px; letter-spacing:0.02em; }
@@ -234,7 +287,12 @@ footer a { color:var(--accent); text-decoration:none; }
 </head>
 <body>
 
-<div class="bg-layer"></div>
+<div class="bg-layer">
+  <div class="aurora"></div>
+  <div class="aurora"></div>
+  <div class="aurora"></div>
+</div>
+<div class="scroll-progress" id="scrollProgress"></div>
 <canvas id="particles"></canvas>
 
 <nav id="nav">
@@ -260,6 +318,14 @@ footer a { color:var(--accent); text-decoration:none; }
     <a href="/store" class="btn btn-p">Browse Store →</a>
     <a href="#work" class="btn btn-s">See My Work ↓</a>
   </div>
+
+  <!-- Live ticker -->
+  <div class="live-ticker">
+    <span class="lt-dot"></span>
+    <span class="lt-label">latest:</span>
+    <span class="lt-text" id="latestTool">loading store data...</span>
+  </div>
+
   <div class="scroll-i"><span>scroll</span><div class="ln"></div></div>
 </section>
 
@@ -269,8 +335,8 @@ footer a { color:var(--accent); text-decoration:none; }
   <div class="ag">
     <div class="at">
       <p>I'm <strong>Joshua</strong>, 15, from the <strong>UK</strong>. I build CLI tools — small, focused utilities that do one thing well and live in the terminal.</p>
-      <p>Every tool is built with <span class="hl">DeepSeek V4 Flash</span>, tested for syntax, packaged with full source code, and published to my <a href="/store">store</a>. No DRM, no accounts, no subscriptions. Pay once in <span class="hl">Litecoin</span>, own it forever.</p>
-      <p>I run <strong>Arch Linux</strong>, use a <strong>RTX 5060</strong> for local AI, and believe the best tools don't need a GUI.</p>
+      <p>Every tool is <span class="hl">tested for syntax</span>, packaged with full source code, and published to my <a href="/store">store</a>. No DRM, no accounts, no subscriptions. Pay once in <span class="hl">Litecoin</span>, own it forever.</p>
+      <p>I run <strong>Arch Linux</strong> with a <strong>RTX 5060</strong>, and believe the best tools don't need a GUI.</p>
       <p style="margin-top:16px;color:var(--accent);font-weight:600;" id="liveStatus">Loading live stats...</p>
     </div>
     <div class="sg">
@@ -301,10 +367,10 @@ footer a { color:var(--accent); text-decoration:none; }
       <span class="ti"><span class="td" style="background:#f472b6;"></span>Node.js</span>
       <span class="ti"><span class="td" style="background:#fb923c;"></span>Linux</span>
       <span class="ti"><span class="td" style="background:#a78bfa;"></span>Git</span>
-      <span class="ti"><span class="td" style="background:#58a6ff;"></span>OpenCode Go</span>
-      <span class="ti"><span class="td" style="background:#ff5f57;"></span>DeepSeek V4 Flash</span>
-      <span class="ti"><span class="td" style="background:#28c840;"></span>Ollama</span>
+      <span class="ti"><span class="td" style="background:#28c840;"></span>Neovim</span>
       <span class="ti"><span class="td" style="background:#f87171;"></span>Docker</span>
+      <span class="ti"><span class="td" style="background:#58a6ff;"></span>GitHub Actions</span>
+      <span class="ti"><span class="td" style="background:#c084fc;"></span>Systemd</span>
     </div>
   </div>
 </section>
@@ -370,7 +436,7 @@ footer a { color:var(--accent); text-decoration:none; }
     <div class="ach-item"><div class="ac-icon">🏗️</div><div class="ac-title">Full Pipeline</div><div class="ac-desc">Automated build → test → publish → store pipeline from scratch</div></div>
     <div class="ach-item"><div class="ac-icon">🎯</div><div class="ac-title">Self-Taught</div><div class="ac-desc">Learned Python, bash, Linux, and git without formal education</div></div>
     <div class="ach-item"><div class="ac-icon">🐧</div><div class="ac-title">Arch Linux</div><div class="ac-desc">Daily drove Arch without giving up (broke it 7 times though)</div></div>
-    <div class="ach-item"><div class="ac-icon">🤖</div><div class="ac-title">AI-Assisted Dev</div><div class="ac-desc">Integrated DeepSeek V4 Flash into a fully automated build system</div></div>
+    <div class="ach-item"><div class="ac-icon">⚡</div><div class="ac-title">Automated Pipeline</div><div class="ac-desc">Built a fully automated build → test → publish → store system from scratch</div></div>
   </div>
 </section>
 
@@ -378,12 +444,36 @@ footer a { color:var(--accent); text-decoration:none; }
 <section class="rv" id="journey">
   <div class="sh"><span class="sn">06</span><span class="st">Journey</span><span class="sl"></span></div>
   <div class="tl">
-    <div class="tl-it"><div class="tld">June 2025</div><div class="tlt">First line of code</div><div class="tlds">Opened a terminal for the first time and wrote `print("hello")`. Couldn't stop.</div></div>
-    <div class="tl-it"><div class="tld">Aug 2025</div><div class="tlt">Built first Python tool</div><div class="tlds">A simple file renamer. 50 lines. Felt like a wizard.</div></div>
-    <div class="tl-it"><div class="tld">Jan 2026</div><div class="tlt">Arch Linux</div><div class="tlds">Installed Arch Linux. Broke it 7 times. Learned more than any tutorial could teach.</div></div>
-    <div class="tl-it"><div class="tld">Mar 2026</div><div class="tlt">Discovered OpenCode Go</div><div class="tlds">Found a way to use DeepSeek V4 Flash for coding. Game changer.</div></div>
-    <div class="tl-it"><div class="tld">May 2026</div><div class="tlt">Store Launch</div><div class="tlds">Published 105 CLI tools for Litecoin. Fully automated pipeline.</div></div>
-    <div class="tl-it"><div class="tld">Now</div><div class="tlt">Still building</div><div class="tlds">Every day I write more code, build better tools, and level up.</div></div>
+    <div class="tl-it" style="--accent-color:var(--dim)">
+      <div class="tld">Mid 2020 · COVID times</div>
+      <div class="tlt">Always into computers & games</div>
+      <div class="tlds">Lockdown meant a lot of screen time. Got curious about how things actually worked under the hood.</div>
+    </div>
+    <div class="tl-it" style="--accent-color:var(--orange)">
+      <div class="tld">2022</div>
+      <div class="tlt">Got my first PC</div>
+      <div class="tlds">Ran basic tools from online that probably didn't go well. Lots of trial and error (mostly error).</div>
+    </div>
+    <div class="tl-it" style="--accent-color:var(--gold)">
+      <div class="tld">Mid 2023</div>
+      <div class="tlt">First own scripts</div>
+      <div class="tlds">Made my first batch and Python scripts. Clunky, messy, but they worked. That feeling was addictive.</div>
+    </div>
+    <div class="tl-it" style="--accent-color:var(--pink)">
+      <div class="tld">2024</div>
+      <div class="tlt">Actually started learning</div>
+      <div class="tlds">Buckled down and learned properly. Python, bash, Linux fundamentals. Things started clicking.</div>
+    </div>
+    <div class="tl-it" style="--accent-color:var(--red)">
+      <div class="tld">2025</div>
+      <div class="tlt">Cheated on games (and stopped)</div>
+      <div class="tlds">Won't lie — I cheated in some games. Figured out how it worked, realized it wasn't the path, and stopped. Taught me a lot about code though.</div>
+    </div>
+    <div class="tl-it" style="--accent-color:var(--green)">
+      <div class="tld">2026 · Now</div>
+      <div class="tlt">Building & trying to make money</div>
+      <div class="tlds">Broke as a joke, so I built a pipeline that makes 100+ CLI tools from scratch and sells them for Litecoin. Learning more every day, actually building stuff that matters.</div>
+    </div>
   </div>
 </section>
 
@@ -394,6 +484,18 @@ footer a { color:var(--accent); text-decoration:none; }
     <a href="/store">Store</a>
     <a href="https://github.com/pxdays">GitHub</a>
     <a href="mailto:pxdays@users.noreply.github.com">Email</a>
+  </div>
+
+  <!-- Now playing widget -->
+  <div class="np-widget" id="npWidget">
+    <div class="np-bar"><div class="np-fill" id="npFill"></div></div>
+    <div class="np-inner">
+      <span class="np-icon">▶</span>
+      <div class="np-info">
+        <span class="np-label" id="npLabel">now building</span>
+        <span class="np-track" id="npTrack">loading...</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -437,7 +539,11 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
 
 // ──── Nav ────
 const nav=document.getElementById('nav');
-window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>50));
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>50);
+  const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);
+  document.getElementById('scrollProgress').style.width=(p*100)+'%';
+});
 
 // ──── Scroll reveal ────
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vs');if(e.target.classList.contains('skill-bar'))e.target.querySelector('.sb-fi').style.width=e.target.querySelector('.sb-fi').style.width||'var(--pct)'}})},{threshold:0.08});
@@ -473,7 +579,12 @@ let allTools = [];
     document.getElementById('liveStatus').textContent = `⚡ ${tools.length} tools live - $${total} total value`;
     document.getElementById('termCount').textContent = tools.length + ' tools';
     document.getElementById('termValue').textContent = '$' + total + ' USD across ' + tools.length + ' products';
-    document.getElementById('termNext').textContent = 'all 105 tools completed. cron auto-adds more every 6h.';
+    document.getElementById('termNext').textContent = 'all ' + tools.length + ' tools completed. cron auto-adds more every 6h.';
+    
+    // Latest tool ticker
+    const latest = tools[tools.length - 1];
+    document.getElementById('latestTool').textContent = latest ? latest.name + ' · $' + latest.price : '—';
+    document.getElementById('npTrack').textContent = latest ? latest.name + ' — $' + latest.price + ' · just shipped' : '—';
     document.getElementById('toolCount').textContent = `showing ${tools.length} tools`;
     
     // Featured (highest priced)
