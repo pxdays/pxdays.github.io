@@ -3,724 +3,232 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Joshua · CLI tools · 15 · UK</title>
+<title>Joshua · 15 · building CLI tools</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #06080c;
-  --surface: #0c0f16;
-  --card: #11161f;
-  --card-hover: #161d2a;
-  --border: #192033;
-  --border2: #253050;
-  --text: #e4e7ed;
-  --sub: #7f8aa3;
-  --dim: #4a536e;
-  --accent: #7c9aff;
-  --acc2: #6a88f0;
-  --green: #4ade80;
-  --gold: #f5c842;
-  --pink: #f472b6;
-  --orange: #fb923c;
-  --radius: 16px;
-  --rad-sm: 10px;
+  --bg: #06080c; --surface: #0c0f16; --card: #11161f; --card-hover: #161d2a;
+  --border: #192033; --border2: #253050; --text: #e4e7ed; --sub: #7f8aa3;
+  --dim: #4a536e; --accent: #7c9aff; --acc2: #6a88f0; --green: #4ade80;
+  --gold: #f5c842; --pink: #f472b6; --orange: #fb923c; --red: #f87171;
+  --radius: 16px; --rad-sm: 10px;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
+* { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; overflow-x:hidden; }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border2); }
-
-/* ── Background layers ── */
+/* ── Background ── */
 .bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(ellipse 60% 45% at 50% 0%, rgba(124,154,255,0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 45% 35% at 80% 85%, rgba(74,222,128,0.025) 0%, transparent 50%),
-    radial-gradient(ellipse 35% 30% at 15% 70%, rgba(245,200,66,0.02) 0%, transparent 45%);
+  position:fixed; inset:0; z-index:-2;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(124,154,255,0.04) 0%, transparent 55%),
+              radial-gradient(ellipse 40% 30% at 80% 85%, rgba(74,222,128,0.02) 0%, transparent 50%),
+              radial-gradient(ellipse 30% 25% at 20% 70%, rgba(245,200,66,0.015) 0%, transparent 45%);
 }
+canvas#particles { position:fixed; inset:0; z-index:-1; pointer-events:none; }
 
-canvas#particles {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
+/* ── Container ── */
+.container { max-width: 820px; margin:0 auto; padding:0 28px; }
 
-/* ──── Container ──── */
-.container { max-width: 820px; margin: 0 auto; padding: 0 28px; }
-
-/* ──── Nav ──── */
+/* ── Nav ── */
 nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: rgba(6,8,12,0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s;
-  padding-left: 28px;
-  padding-right: 28px;
+  display:flex; justify-content:center; padding:16px 0;
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(6,8,12,0.6); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid transparent; transition:all 0.3s;
 }
+nav.scrolled { border-bottom-color:var(--border); background:rgba(6,8,12,0.95); }
+nav .inner { max-width:820px; width:100%; display:flex; justify-content:space-between; align-items:center; padding:0 28px; }
+.logo { font-weight:800; font-size:1em; color:var(--text); text-decoration:none; font-family:'JetBrains Mono',monospace; }
+.logo .acc { color:var(--accent); }
+.nav-links { display:flex; gap:20px; align-items:center; }
+.nav-links a { color:var(--dim); text-decoration:none; font-size:0.75em; font-weight:500; transition:color 0.2s; letter-spacing:0.04em; text-transform:uppercase; }
+.nav-links a:hover { color:var(--text); }
+.nav-links .bn { background:var(--accent); color:#fff; padding:7px 16px; border-radius:6px; font-weight:600; text-transform:none; letter-spacing:0; font-size:0.8em; }
+.nav-links .bn:hover { background:var(--acc2); color:#fff; }
 
-nav.scrolled {
-  border-bottom-color: var(--border);
-  background: rgba(6,8,12,0.95);
-}
-
-nav .inner {
-  max-width: 820px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  font-weight: 800;
-  font-size: 1em;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  text-decoration: none;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.logo .acc { color: var(--accent); }
-
-.nav-links { display: flex; gap: 20px; align-items: center; }
-
-.nav-links a {
-  color: var(--dim);
-  text-decoration: none;
-  font-size: 0.78em;
-  font-weight: 500;
-  transition: color 0.2s;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.nav-links a:hover { color: var(--text); }
-
-.nav-links .btn-nav {
-  background: var(--accent);
-  color: #fff;
-  padding: 7px 16px;
-  border-radius: 6px;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 0.8em;
-}
-
-.nav-links .btn-nav:hover { background: var(--acc2); color: #fff; }
-
-/* ──── Hero ──── */
+/* ── Hero ── */
 .hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 120px 0 80px;
-  position: relative;
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding:120px 0 80px; position:relative;
 }
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.72em;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--dim);
-  margin-bottom: 20px;
-  animation: fadeUpS 0.8s ease;
+.h-badge { display:inline-flex; align-items:center; gap:8px; font-size:0.7em; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:var(--dim); margin-bottom:20px; animation:fU 0.8s ease; }
+.h-badge .dot { width:6px; height:6px; background:var(--green); border-radius:50%; display:inline-block; animation:pd 2s ease-in-out infinite; }
+@keyframes pd { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.hero h1 { font-size:4em; font-weight:900; letter-spacing:-0.04em; line-height:1.02; margin-bottom:18px; animation:fU 0.8s ease 0.1s both; }
+.hero h1 .grd {
+  background:linear-gradient(135deg,#7c9aff 0%,#a78bfa 30%,#f5c842 55%,#fb923c 80%,#f472b6 100%);
+  background-size:400% 400%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  animation:sh 10s ease-in-out infinite;
 }
-
-.hero-badge .dot {
-  width: 6px; height: 6px;
-  background: var(--green);
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.hero h1 {
-  font-size: 4em;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.02;
-  margin-bottom: 18px;
-  animation: fadeUpS 0.8s ease 0.1s both;
-}
-
-.hero h1 .grad {
-  background: linear-gradient(135deg, #7c9aff 0%, #a78bfa 35%, #f5c842 65%, #fb923c 100%);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 8s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 0%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 50%; }
-}
-
-.hero .sub {
-  font-size: 1.1em;
-  color: var(--sub);
-  max-width: 520px;
-  line-height: 1.75;
-  margin-bottom: 32px;
-  animation: fadeUpS 0.8s ease 0.2s both;
-}
-
-.hero .sub em {
-  font-style: normal;
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  animation: fadeUpS 0.8s ease 0.3s both;
-}
+@keyframes sh { 0%{background-position:0% 50%} 25%{background-position:100% 0%} 50%{background-position:100% 100%} 75%{background-position:0% 100%} 100%{background-position:0% 50%} }
+.hero .sub { font-size:1.05em; color:var(--sub); max-width:520px; line-height:1.75; margin-bottom:32px; animation:fU 0.8s ease 0.2s both; }
+.hero .sub em { font-style:normal; color:var(--accent); font-weight:500; }
+.h-acts { display:flex; gap:12px; flex-wrap:wrap; animation:fU 0.8s ease 0.3s both; }
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
+  display:inline-flex; align-items:center; gap:7px; padding:12px 24px; border-radius:8px;
+  font-size:0.85em; font-weight:600; text-decoration:none; transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+  font-family:inherit; cursor:pointer; border:none;
 }
+.btn-p { background:linear-gradient(135deg,var(--accent),var(--acc2)); color:#fff; box-shadow:0 4px 20px rgba(124,154,255,0.15); }
+.btn-p:hover { transform:translateY(-3px); box-shadow:0 8px 30px rgba(124,154,255,0.25); }
+.btn-s { background:var(--card); border:1px solid var(--border); color:var(--sub); }
+.btn-s:hover { border-color:var(--border2); color:var(--text); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.2); }
 
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), var(--acc2));
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(124,154,255,0.15);
+.scroll-i {
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  color:var(--dim); font-size:0.6em; font-weight:500; text-transform:uppercase; letter-spacing:0.1em;
+  animation:fU 0.8s ease 0.6s both;
 }
+.scroll-i .ln { width:1px; height:40px; background:linear-gradient(to bottom,var(--dim),transparent); animation:sp 2s ease-in-out infinite; }
+@keyframes sp { 0%{opacity:0.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} 100%{opacity:0.3;transform:scaleY(1)} }
 
-.btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(124,154,255,0.25);
+/* ── Section ── */
+section { padding:100px 0; }
+.sh { display:flex; align-items:center; gap:14px; margin-bottom:40px; }
+.sh .sn { font-family:'JetBrains Mono',monospace; font-size:0.8em; font-weight:600; color:var(--accent); opacity:0.6; }
+.sh .st { font-size:0.68em; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:var(--dim); flex-shrink:0; }
+.sh .sl { flex:1; height:1px; background:linear-gradient(to right,var(--border),transparent); }
+
+/* ── About ── */
+.ag { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start; }
+.at p { font-size:0.92em; color:var(--sub); line-height:1.85; margin-bottom:14px; }
+.at strong { color:var(--text); font-weight:600; }
+.at a { color:var(--accent); text-decoration:none; font-weight:500; }
+.at a:hover { text-decoration:underline; }
+.at .hl { display:inline-block; background:rgba(124,154,255,0.06); border:1px solid rgba(124,154,255,0.1); padding:0 6px; border-radius:4px; color:var(--accent); font-weight:500; }
+.sg { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.sc { background:var(--card); border:1px solid var(--border); border-radius:var(--rad-sm); padding:20px; text-align:center; transition:all 0.25s; }
+.sc:hover { border-color:var(--border2); transform:translateY(-2px); }
+.sc .n { font-size:1.8em; font-weight:800; color:var(--accent); letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+.sc .n.gr { color:var(--green); } .sc .n.gd { color:var(--gold); } .sc .n.pk { color:var(--pink); } .sc .n.or { color:var(--orange); }
+.sc .l { font-size:0.68em; color:var(--dim); margin-top:3px; font-weight:500; text-transform:uppercase; letter-spacing:0.04em; }
+
+/* ── Skills bars ── */
+.skills { margin-top:32px; }
+.skills-title { font-size:0.68em; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:var(--dim); margin-bottom:20px; }
+.skill-bar { margin-bottom:16px; }
+.skill-bar .sb-h { display:flex; justify-content:space-between; font-size:0.82em; margin-bottom:4px; }
+.skill-bar .sb-h .sbn { color:var(--text); font-weight:500; }
+.skill-bar .sb-h .sbv { color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:0.78em; }
+.skill-bar .sb-tr { height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.skill-bar .sb-fi { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--accent),var(--green)); width:0; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); }
+.skill-bar.visible .sb-fi { width:var(--pct); }
+
+/* ── Tech grid ── */
+.tg { display:flex; flex-wrap:wrap; gap:8px; }
+.ti { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.78em; font-weight:500; color:var(--sub); transition:all 0.2s; }
+.ti:hover { border-color:var(--border2); color:var(--text); transform:translateY(-2px); }
+.ti .td { width:6px; height:6px; border-radius:50%; display:inline-block; }
+
+/* ── Featured tools ── */
+.tg-ft { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.tc-ft {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--rad-sm);
+  padding:24px; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  text-decoration:none; display:block; position:relative; overflow:hidden;
 }
-
-.btn-secondary {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--sub);
-}
-
-.btn-secondary:hover {
-  border-color: var(--border2);
-  color: var(--text);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-}
-
-/* ── Scroll indicator ── */
-.scroll-indicator {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  color: var(--dim);
-  font-size: 0.65em;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  animation: fadeUpS 0.8s ease 0.6s both;
-}
-
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--dim), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0% { opacity: 0.3; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.2); }
-  100% { opacity: 0.3; transform: scaleY(1); }
-}
-
-/* ──── Section ──── */
-section { padding: 100px 0; }
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 40px;
-}
-
-.section-number {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8em;
-  font-weight: 600;
-  color: var(--accent);
-  opacity: 0.6;
-}
-
-.section-title {
-  font-size: 0.68em;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--dim);
-  flex-shrink: 0;
-}
-
-.section-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, var(--border), transparent);
-}
-
-/* ──── About ──── */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: start;
-}
-
-.about-text p {
-  font-size: 0.92em;
-  color: var(--sub);
-  line-height: 1.85;
-  margin-bottom: 14px;
-}
-
-.about-text strong { color: var(--text); font-weight: 600; }
-
-.about-text a {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.about-text a:hover { text-decoration: underline; }
-
-.about-text .highlight {
-  display: inline-block;
-  background: rgba(124,154,255,0.06);
-  border: 1px solid rgba(124,154,255,0.1);
-  padding: 0 6px;
-  border-radius: 4px;
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--rad-sm);
-  padding: 20px;
-  text-align: center;
-  transition: all 0.25s;
-}
-
-.stat-card:hover {
-  border-color: var(--border2);
-  transform: translateY(-2px);
-}
-
-.stat-card .num {
-  font-size: 1.8em;
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-card .num.gr { color: var(--green); }
-.stat-card .num.gd { color: var(--gold); }
-.stat-card .num.pk { color: var(--pink); }
-.stat-card .num.or { color: var(--orange); }
-
-.stat-card .lbl {
-  font-size: 0.68em;
-  color: var(--dim);
-  margin-top: 3px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-/* ──── Tech stack ──── */
-.tech-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tech-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.78em;
-  font-weight: 500;
-  color: var(--sub);
-  transition: all 0.2s;
-}
-
-.tech-item:hover {
-  border-color: var(--border2);
-  color: var(--text);
-  transform: translateY(-2px);
-}
-
-.tech-item .t-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-/* ──── Tools grid ──── */
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 10px;
-}
-
-.tool-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--rad-sm);
-  padding: 20px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  display: block;
-  position: relative;
-  overflow: hidden;
-}
-
-.tool-card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--rad-sm) + 1px);
-  background: linear-gradient(135deg, rgba(124,154,255,0.06), transparent 50%);
-  opacity: 0;
-  transition: opacity 0.4s;
-  pointer-events: none;
-}
-
-.tool-card:hover {
-  border-color: var(--border2);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-}
-
-.tool-card:hover::before { opacity: 1; }
-
-.tool-card > * { position: relative; z-index: 1; }
-
-.tool-card .tc-name {
-  font-size: 0.85em;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8em;
-}
-
-.tool-card .tc-desc {
-  font-size: 0.74em;
-  color: var(--dim);
-  line-height: 1.55;
-  margin-bottom: 10px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.tool-card .tc-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tool-card .tc-price {
-  font-size: 0.85em;
-  font-weight: 700;
-  color: var(--green);
-}
-
-.tool-card .tc-arrow {
-  color: var(--dim);
-  font-size: 0.7em;
-  transition: all 0.2s;
-}
-
-.tool-card:hover .tc-arrow {
-  color: var(--accent);
-  transform: translateX(4px);
-}
-
-.tools-more {
-  text-align: center;
-  margin-top: 20px;
-}
-
-.tools-more a {
-  color: var(--dim);
-  text-decoration: none;
-  font-size: 0.82em;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.tools-more a:hover { color: var(--accent); }
-
-/* ──── Terminal section ──── */
-.terminal-box {
-  background: #000;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.terminal-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-
-.terminal-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-}
-
-.terminal-dot.r { background: #ff5f57; }
-.terminal-dot.y { background: #ffbd2e; }
-.terminal-dot.g { background: #28c840; }
-
-.terminal-body {
-  padding: 20px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.78em;
-  line-height: 1.8;
-  color: var(--sub);
-  min-height: 180px;
-}
-
-.terminal-body .prompt {
-  color: var(--green);
-}
-
-.terminal-body .cmd {
-  color: var(--text);
-}
-
-.terminal-body .output {
-  color: var(--dim);
-  padding-left: 16px;
-}
-
-.terminal-cursor {
-  display: inline-block;
-  width: 7px;
-  height: 15px;
-  background: var(--accent);
-  animation: blink 1s step-end infinite;
-  vertical-align: text-bottom;
-  margin-left: 2px;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-/* ──── Timeline ──── */
-.timeline {
-  position: relative;
-  padding-left: 28px;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: linear-gradient(to bottom, var(--border), var(--border) 50%, transparent);
-}
-
-.timeline-item {
-  position: relative;
-  padding-bottom: 28px;
-}
-
-.timeline-item::before {
-  content: '';
-  position: absolute;
-  left: -33px;
-  top: 6px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 0 2px var(--accent);
-}
-
-.timeline-item .tl-date {
-  font-size: 0.72em;
-  font-weight: 600;
-  color: var(--dim);
-  font-family: 'JetBrains Mono', monospace;
-  margin-bottom: 4px;
-}
-
-.timeline-item .tl-title {
-  font-size: 0.9em;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.timeline-item .tl-desc {
-  font-size: 0.82em;
-  color: var(--sub);
-  line-height: 1.6;
-}
-
-/* ──── Contact ──── */
-.contact-links {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.contact-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  text-decoration: none;
-  color: var(--sub);
-  font-size: 0.82em;
-  font-weight: 500;
-  transition: all 0.25s;
-}
-
-.contact-links a:hover {
-  border-color: var(--border2);
-  color: var(--text);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-}
-
-/* ──── Footer ──── */
-footer {
-  text-align: center;
-  padding: 48px 0 60px;
-  border-top: 1px solid var(--border);
-}
-
-footer p {
-  font-size: 0.78em;
-  color: var(--dim);
-  margin-bottom: 4px;
-  letter-spacing: 0.02em;
-}
-
-footer .heart { color: var(--pink); }
-
-/* ──── Animations ──── */
-@keyframes fadeUpS {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ──── Responsive ──── */
-@media (max-width: 700px) {
-  .hero h1 { font-size: 2.6em; }
-  .about-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .tools-grid { grid-template-columns: 1fr; }
-  .nav-links a:not(.btn-nav) { display: none; }
-  section { padding: 60px 0; }
-  .container { padding: 0 20px; }
-  nav { padding-left: 20px; padding-right: 20px; }
+.tc-ft::before { content:''; position:absolute; inset:-1px; border-radius:calc(var(--rad-sm)+1px); background:linear-gradient(135deg,rgba(124,154,255,0.06),transparent 50%); opacity:0; transition:opacity 0.4s; pointer-events:none; }
+.tc-ft:hover { border-color:var(--border2); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+.tc-ft:hover::before { opacity:1; }
+.tc-ft>* { position:relative; z-index:1; }
+.tc-ft .tcn { font-size:0.85em; font-weight:600; color:var(--text); margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
+.tc-ft .tcd { font-size:0.74em; color:var(--dim); line-height:1.6; margin-bottom:12px; }
+.tc-ft .tcb { display:flex; justify-content:space-between; align-items:center; }
+.tc-ft .tcp { font-size:0.85em; font-weight:700; color:var(--green); }
+.tc-ft .tca { color:var(--dim); font-size:0.7em; transition:all 0.2s; }
+.tc-ft:hover .tca { color:var(--accent); transform:translateX(4px); }
+
+/* ── All tools grid ── */
+.tg-all { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+.tc-sm { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; transition:all 0.2s; text-decoration:none; display:block; }
+.tc-sm:hover { border-color:var(--border2); transform:translateY(-2px); }
+.tc-sm .tsn { font-size:0.75em; font-weight:500; color:var(--text); font-family:'JetBrains Mono',monospace; }
+.tc-sm .tsp { font-size:0.7em; color:var(--dim); margin-top:2px; }
+
+/* ── Tools filter ── */
+.tf { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.tf input { flex:1; min-width:160px; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:inherit; font-size:0.82em; outline:none; transition:border-color 0.2s; }
+.tf input:focus { border-color:var(--accent); }
+.tf input::placeholder { color:var(--dim); }
+.tf .tfc { padding:8px 14px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.75em; color:var(--dim); cursor:pointer; transition:all 0.2s; font-family:inherit; }
+.tf .tfc:hover { border-color:var(--border2); color:var(--text); }
+.tf .tfc.act { border-color:var(--accent); color:var(--accent); }
+
+.tools-more { text-align:center; margin-top:20px; }
+.tools-more a { color:var(--dim); text-decoration:none; font-size:0.82em; font-weight:500; transition:color 0.2s; }
+.tools-more a:hover { color:var(--accent); }
+
+/* ── Terminal ── */
+.term-box { background:#000; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.term-h { display:flex; align-items:center; gap:8px; padding:12px 16px; background:var(--surface); border-bottom:1px solid var(--border); }
+.term-d { width:10px; height:10px; border-radius:50%; }
+.term-d.r { background:#ff5f57; } .term-d.y { background:#ffbd2e; } .term-d.g { background:#28c840; }
+.term-b { padding:20px; font-family:'JetBrains Mono',monospace; font-size:0.75em; line-height:1.9; color:var(--sub); min-height:200px; }
+.term-b .pm { color:var(--green); }
+.term-b .cmd { color:var(--text); }
+.term-b .out { color:var(--dim); padding-left:16px; }
+.term-c { display:inline-block; width:7px; height:15px; background:var(--accent); animation:bl 1s step-end infinite; vertical-align:text-bottom; margin-left:2px; }
+@keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Activity graph ── */
+.act-graph { display:flex; gap:3px; align-items:flex-end; height:100px; padding:16px 0; }
+.act-bar { flex:1; border-radius:2px 2px 0 0; min-height:4px; transition:all 0.3s; position:relative; cursor:pointer; }
+.act-bar:hover { opacity:0.8; transform:scaleY(1.1); }
+.act-bar .act-tip { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); font-size:0.6em; color:var(--dim); white-space:nowrap; background:var(--card); padding:2px 6px; border-radius:4px; border:1px solid var(--border); opacity:0; transition:opacity 0.2s; pointer-events:none; }
+.act-bar:hover .act-tip { opacity:1; }
+.act-labels { display:flex; justify-content:space-between; font-size:0.6em; color:var(--dim); margin-top:4px; }
+
+/* ── Achievements ── */
+.ach-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+.ach-item { background:var(--card); border:1px solid var(--border); border-radius:var(--rad-sm); padding:18px; text-align:center; transition:all 0.2s; }
+.ach-item:hover { border-color:var(--border2); transform:translateY(-2px); }
+.ach-item .ac-icon { font-size:1.6em; margin-bottom:6px; }
+.ach-item .ac-title { font-size:0.78em; font-weight:600; color:var(--text); margin-bottom:4px; }
+.ach-item .ac-desc { font-size:0.7em; color:var(--dim); line-height:1.4; }
+
+/* ── Timeline ── */
+.tl { position:relative; padding-left:28px; }
+.tl::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,var(--border),var(--border) 50%,transparent); }
+.tl-it { position:relative; padding-bottom:28px; }
+.tl-it::before { content:''; position:absolute; left:-33px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--accent); border:2px solid var(--bg); box-shadow:0 0 0 2px var(--accent); }
+.tl-it .tld { font-size:0.7em; font-weight:600; color:var(--dim); font-family:'JetBrains Mono',monospace; margin-bottom:4px; }
+.tl-it .tlt { font-size:0.9em; font-weight:600; color:var(--text); margin-bottom:4px; }
+.tl-it .tlds { font-size:0.82em; color:var(--sub); line-height:1.6; }
+
+/* ── Contact ── */
+.cl { display:flex; gap:12px; flex-wrap:wrap; }
+.cl a { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; background:var(--card); border:1px solid var(--border); border-radius:8px; text-decoration:none; color:var(--sub); font-size:0.82em; font-weight:500; transition:all 0.25s; }
+.cl a:hover { border-color:var(--border2); color:var(--text); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.2); }
+
+/* ── Footer ── */
+footer { text-align:center; padding:48px 0 60px; border-top:1px solid var(--border); }
+footer p { font-size:0.78em; color:var(--dim); margin-bottom:4px; letter-spacing:0.02em; }
+footer .hrt { color:var(--pink); }
+footer a { color:var(--accent); text-decoration:none; }
+
+/* ── Animations ── */
+@keyframes fU { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.rv { opacity:0; transform:translateY(30px); transition:all 0.7s cubic-bezier(0.4,0,0.2,1); }
+.rv.vs { opacity:1; transform:translateY(0); }
+
+/* ── Counter animation ── */
+.counter { display:inline-block; }
+
+@media (max-width:700px) {
+  .hero h1 { font-size:2.4em; }
+  .ag { grid-template-columns:1fr; }
+  .sg { grid-template-columns:1fr 1fr; }
+  .tg-ft { grid-template-columns:1fr; }
+  .tg-all { grid-template-columns:1fr 1fr; }
+  .nav-links a:not(.bn) { display:none; }
+  section { padding:60px 0; }
+  .container { padding:0 20px; }
 }
 </style>
 </head>
@@ -729,7 +237,6 @@ footer .heart { color: var(--pink); }
 <div class="bg-layer"></div>
 <canvas id="particles"></canvas>
 
-<!-- Nav -->
 <nav id="nav">
   <div class="inner">
     <a href="#" class="logo">joshua<span class="acc">.</span></a>
@@ -737,7 +244,7 @@ footer .heart { color: var(--pink); }
       <a href="#about">about</a>
       <a href="#work">work</a>
       <a href="#journey">journey</a>
-      <a href="/store" class="btn-nav">Store</a>
+      <a href="/store" class="bn">Store</a>
     </div>
   </div>
 </nav>
@@ -746,145 +253,144 @@ footer .heart { color: var(--pink); }
 
 <!-- ═══ HERO ═══ -->
 <section class="hero">
-  <div class="hero-badge"><span class="dot"></span> 15 · UK · building things</div>
-  <h1>i make things<br>that live in <span class="grad">the terminal</span></h1>
-  <p class="sub">CLI tools for developers, sysadmins, and anyone who'd rather <em>type than click</em>. No fluff. No subscriptions. Just code.</p>
-  <div class="hero-actions">
-    <a href="/store" class="btn btn-primary">Browse Store →</a>
-    <a href="#work" class="btn btn-secondary">See My Work ↓</a>
+  <div class="h-badge"><span class="dot"></span> 15 · UK · building tools since may 2026</div>
+  <h1>i make things<br>that live in <span class="grd">the terminal</span></h1>
+  <p class="sub">CLI tools for developers, sysadmins, and anyone who'd rather <em>type than click</em>. No fluff. No subscriptions. Just code, tested and shipped.</p>
+  <div class="h-acts">
+    <a href="/store" class="btn btn-p">Browse Store →</a>
+    <a href="#work" class="btn btn-s">See My Work ↓</a>
   </div>
-  <div class="scroll-indicator">
-    <span>scroll</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="scroll-i"><span>scroll</span><div class="ln"></div></div>
 </section>
 
 <!-- ═══ ABOUT ═══ -->
-<section id="about" class="reveal">
-  <div class="section-header">
-    <span class="section-number">01</span>
-    <span class="section-title">About</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="about-grid">
-    <div class="about-text">
-      <p>I'm <strong>Joshua</strong>, 15, from the <strong>UK</strong>. I build CLI tools — small, focused utilities that live in the terminal and do one thing well.</p>
-      <p>Every tool is built with <span class="highlight">DeepSeek V4 Flash</span>, tested for syntax errors, packaged with full source code, and published to my <a href="/store">store</a>. No DRM. No accounts. No subscriptions. Pay once in <span class="highlight">Litecoin</span>, own it forever.</p>
-      <p>I'm self-taught, I use <strong>Arch Linux</strong> (btw), and I believe good tools don't need a GUI. <strong style="color:var(--accent)">40+ tools built so far.</strong></p>
+<section id="about" class="rv">
+  <div class="sh"><span class="sn">01</span><span class="st">About</span><span class="sl"></span></div>
+  <div class="ag">
+    <div class="at">
+      <p>I'm <strong>Joshua</strong>, 15, from the <strong>UK</strong>. I build CLI tools — small, focused utilities that do one thing well and live in the terminal.</p>
+      <p>Every tool is built with <span class="hl">DeepSeek V4 Flash</span>, tested for syntax, packaged with full source code, and published to my <a href="/store">store</a>. No DRM, no accounts, no subscriptions. Pay once in <span class="hl">Litecoin</span>, own it forever.</p>
+      <p>I run <strong>Arch Linux</strong>, use a <strong>RTX 5060</strong> for local AI, and believe the best tools don't need a GUI.</p>
+      <p style="margin-top:16px;color:var(--accent);font-weight:600;" id="liveStatus">Loading live stats...</p>
     </div>
-
-    <div class="stats-grid">
-      <div class="stat-card"><div class="num" id="statTools">—</div><div class="lbl">tools built</div></div>
-      <div class="stat-card"><div class="num gr" id="statValue">—</div><div class="lbl">total value</div></div>
-      <div class="stat-card"><div class="num gd">LTC</div><div class="lbl">payments</div></div>
-      <div class="stat-card"><div class="num pk" id="statAge">—</div><div class="lbl">lines of code</div></div>
+    <div class="sg">
+      <div class="sc"><div class="n" id="sTools">—</div><div class="l">tools built</div></div>
+      <div class="sc"><div class="n gr" id="sValue">—</div><div class="l">total value</div></div>
+      <div class="sc"><div class="n gd">LTC</div><div class="l">accepted</div></div>
+      <div class="sc"><div class="n pk" id="sCode">—</div><div class="l">lines of code</div></div>
     </div>
   </div>
 
-  <div style="margin-top:32px;">
-    <div class="section-header" style="margin-bottom:16px;">
-      <span class="section-number">⚡</span>
-      <span class="section-title">Stack</span>
-      <span class="section-line"></span>
-    </div>
-    <div class="tech-grid">
-      <span class="tech-item"><span class="t-dot" style="background:#7c9aff;"></span> Python</span>
-      <span class="tech-item"><span class="t-dot" style="background:#4ade80;"></span> Bash</span>
-      <span class="tech-item"><span class="t-dot" style="background:#f5c842;"></span> JavaScript</span>
-      <span class="tech-item"><span class="t-dot" style="background:#f472b6;"></span> Node.js</span>
-      <span class="tech-item"><span class="t-dot" style="background:#fb923c;"></span> Linux</span>
-      <span class="tech-item"><span class="t-dot" style="background:#a78bfa;"></span> Git</span>
-      <span class="tech-item"><span class="t-dot" style="background:#58a6ff;"></span> OpenCode Go</span>
-      <span class="tech-item"><span class="t-dot" style="background:#ff5f57;"></span> DeepSeek V4 Flash</span>
-      <span class="tech-item"><span class="t-dot" style="background:#28c840;"></span> Ollama</span>
+  <!-- Skills -->
+  <div class="skills">
+    <div class="skills-title">/ proficiency</div>
+    <div class="skill-bar rv"><div class="sb-h"><span class="sbn">Python</span><span class="sbv">90%</span></div><div class="sb-tr"><div class="sb-fi" style="--pct:90%;"></div></div></div>
+    <div class="skill-bar rv"><div class="sb-h"><span class="sbn">Bash / Shell</span><span class="sbv">85%</span></div><div class="sb-tr"><div class="sb-fi" style="--pct:85%;"></div></div></div>
+    <div class="skill-bar rv"><div class="sb-h"><span class="sbn">JavaScript / Node.js</span><span class="sbv">60%</span></div><div class="sb-tr"><div class="sb-fi" style="--pct:60%;"></div></div></div>
+    <div class="skill-bar rv"><div class="sb-h"><span class="sbn">Linux / Arch</span><span class="sbv">80%</span></div><div class="sb-tr"><div class="sb-fi" style="--pct:80%;"></div></div></div>
+    <div class="skill-bar rv"><div class="sb-h"><span class="sbn">Git / GitHub</span><span class="sbv">70%</span></div><div class="sb-tr"><div class="sb-fi" style="--pct:70%;"></div></div></div>
+  </div>
+
+  <!-- Stack -->
+  <div style="margin-top:28px;">
+    <div class="skills-title">/ stack</div>
+    <div class="tg">
+      <span class="ti"><span class="td" style="background:#7c9aff;"></span>Python</span>
+      <span class="ti"><span class="td" style="background:#4ade80;"></span>Bash</span>
+      <span class="ti"><span class="td" style="background:#f5c842;"></span>JavaScript</span>
+      <span class="ti"><span class="td" style="background:#f472b6;"></span>Node.js</span>
+      <span class="ti"><span class="td" style="background:#fb923c;"></span>Linux</span>
+      <span class="ti"><span class="td" style="background:#a78bfa;"></span>Git</span>
+      <span class="ti"><span class="td" style="background:#58a6ff;"></span>OpenCode Go</span>
+      <span class="ti"><span class="td" style="background:#ff5f57;"></span>DeepSeek V4 Flash</span>
+      <span class="ti"><span class="td" style="background:#28c840;"></span>Ollama</span>
+      <span class="ti"><span class="td" style="background:#f87171;"></span>Docker</span>
     </div>
   </div>
 </section>
 
-<!-- ═══ WORK ═══ -->
-<section id="work" class="reveal">
-  <div class="section-header">
-    <span class="section-number">02</span>
-    <span class="section-title">Tools</span>
-    <span class="section-line"></span>
+<!-- ═══ FEATURED ═══ -->
+<section class="rv" id="work">
+  <div class="sh"><span class="sn">02</span><span class="st">Featured</span><span class="sl"></span></div>
+  <div class="tg-ft" id="featuredGrid">
+    <div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;padding:40px 0;">loading featured tools...</div>
   </div>
+</section>
 
-  <div class="tools-grid" id="toolsGrid">
+<!-- ═══ ALL TOOLS ═══ -->
+<section class="rv">
+  <div class="sh"><span class="sn">03</span><span class="st">All Tools</span><span class="sl"></span></div>
+  <div class="tf">
+    <input type="text" id="toolSearch" placeholder="search tools..." oninput="filterTools()">
+    <span class="tfc act" onclick="sortTools('newest',this)" id="sNew">newest</span>
+    <span class="tfc" onclick="sortTools('alpha',this)" id="sAlpha">a-z</span>
+    <span class="tfc" onclick="sortTools('price',this)" id="sPrice">price ↓</span>
+  </div>
+  <div class="tg-all" id="allToolsGrid">
     <div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;padding:40px 0;">loading...</div>
   </div>
+  <div style="text-align:center;margin-top:16px;color:var(--dim);font-size:0.75em;" id="toolCount"></div>
+</section>
 
-  <div class="tools-more">
-    <a href="/store">View all tools in the store →</a>
+<!-- ═══ ACTIVITY ═══ -->
+<section class="rv">
+  <div class="sh"><span class="sn">04</span><span class="st">Activity</span><span class="sl"></span></div>
+  <div class="term-box">
+    <div class="term-h">
+      <span class="term-d r"></span><span class="term-d y"></span><span class="term-d g"></span>
+      <span style="font-size:0.68em;color:var(--dim);margin-left:8px;font-family:'JetBrains Mono',monospace;">joshua@buildbox — bash</span>
+    </div>
+    <div class="term-b" id="terminal">
+      <div><span class="pm">$</span> <span class="cmd">whoami</span></div>
+      <div class="out">joshua · 15 · uk · toolmaker · 105 tools and counting</div>
+      <div><span class="pm">$</span> <span class="cmd">ls -la tools/ | wc -l</span></div>
+      <div class="out" id="termCount">—</div>
+      <div><span class="pm">$</span> <span class="cmd">cat store/value.txt</span></div>
+      <div class="out" id="termValue">—</div>
+      <div><span class="pm">$</span> <span class="cmd">./build --next</span></div>
+      <div class="out" id="termNext">—</div>
+      <div><span class="pm">$</span> <span class="cmd" id="lastCmd">./keep-building.sh <span class="term-c"></span></span></div>
+    </div>
+  </div>
+
+  <!-- Activity graph -->
+  <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--rad-sm);padding:16px 20px;">
+    <div style="font-size:0.68em;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--dim);margin-bottom:8px;">build activity (last 30 days)</div>
+    <div class="act-graph" id="actGraph"></div>
+    <div class="act-labels"><span>today</span><span>2 weeks ago</span><span>30 days ago</span></div>
   </div>
 </section>
 
-<!-- ═══ TERMINAL ═══ -->
-<section class="reveal">
-  <div class="section-header">
-    <span class="section-number">03</span>
-    <span class="section-title">Live</span>
-    <span class="section-line"></span>
-  </div>
-  <div class="terminal-box">
-    <div class="terminal-header">
-      <span class="terminal-dot r"></span>
-      <span class="terminal-dot y"></span>
-      <span class="terminal-dot g"></span>
-      <span style="font-size:0.7em;color:var(--dim);margin-left:8px;font-family:'JetBrains Mono',monospace;">joshua@buildbox — bash</span>
-    </div>
-    <div class="terminal-body" id="terminal">
-      <div><span class="prompt">$</span> <span class="cmd">whoami</span></div>
-      <div class="output">joshua · 15 · uk · toolmaker</div>
-      <div><span class="prompt">$</span> <span class="cmd">ls -la tools/ | wc -l</span></div>
-      <div class="output" id="termCount">loading...</div>
-      <div><span class="prompt">$</span> <span class="cmd">cat store/value.txt</span></div>
-      <div class="output" id="termValue">loading...</div>
-      <div><span class="prompt">$</span> <span class="cmd" id="termCursorLine">./keep-building.sh <span class="terminal-cursor"></span></span></div>
-    </div>
+<!-- ═══ ACHIEVEMENTS ═══ -->
+<section class="rv">
+  <div class="sh"><span class="sn">05</span><span class="st">Achievements</span><span class="sl"></span></div>
+  <div class="ach-grid">
+    <div class="ach-item"><div class="ac-icon">🚀</div><div class="ac-title">100+ Tools</div><div class="ac-desc">Built and published over 100 CLI tools in a single day</div></div>
+    <div class="ach-item"><div class="ac-icon">💰</div><div class="ac-title">Crypto Payments</div><div class="ac-desc">Self-taught how to accept Litecoin without a bank account</div></div>
+    <div class="ach-item"><div class="ac-icon">🏗️</div><div class="ac-title">Full Pipeline</div><div class="ac-desc">Automated build → test → publish → store pipeline from scratch</div></div>
+    <div class="ach-item"><div class="ac-icon">🎯</div><div class="ac-title">Self-Taught</div><div class="ac-desc">Learned Python, bash, Linux, and git without formal education</div></div>
+    <div class="ach-item"><div class="ac-icon">🐧</div><div class="ac-title">Arch Linux</div><div class="ac-desc">Daily drove Arch without giving up (broke it 7 times though)</div></div>
+    <div class="ach-item"><div class="ac-icon">🤖</div><div class="ac-title">AI-Assisted Dev</div><div class="ac-desc">Integrated DeepSeek V4 Flash into a fully automated build system</div></div>
   </div>
 </section>
 
 <!-- ═══ JOURNEY ═══ -->
-<section id="journey" class="reveal">
-  <div class="section-header">
-    <span class="section-number">04</span>
-    <span class="section-title">Journey</span>
-    <span class="section-line"></span>
-  </div>
-
-  <div class="timeline">
-    <div class="timeline-item">
-      <div class="tl-date">June 2025</div>
-      <div class="tl-title">Started learning Python</div>
-      <div class="tl-desc">Opened a terminal for the first time and wrote `print("hello")`. Couldn't stop.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="tl-date">Early 2026</div>
-      <div class="tl-title">Discovered Linux + Arch</div>
-      <div class="tl-desc">Installed Arch Linux (btw), broke it 7 times, learned more than any tutorial could teach.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="tl-date">May 2026</div>
-      <div class="tl-title">Launched my tool store</div>
-      <div class="tl-desc">Started building and selling CLI tools for Litecoin. 40+ tools in the first day.</div>
-    </div>
-    <div class="timeline-item">
-      <div class="tl-date">Now</div>
-      <div class="tl-title">Still building, still learning</div>
-      <div class="tl-desc">Every day I write more code, build more tools, and get a little better.</div>
-    </div>
+<section class="rv" id="journey">
+  <div class="sh"><span class="sn">06</span><span class="st">Journey</span><span class="sl"></span></div>
+  <div class="tl">
+    <div class="tl-it"><div class="tld">June 2025</div><div class="tlt">First line of code</div><div class="tlds">Opened a terminal for the first time and wrote `print("hello")`. Couldn't stop.</div></div>
+    <div class="tl-it"><div class="tld">Aug 2025</div><div class="tlt">Built first Python tool</div><div class="tlds">A simple file renamer. 50 lines. Felt like a wizard.</div></div>
+    <div class="tl-it"><div class="tld">Jan 2026</div><div class="tlt">Arch Linux</div><div class="tlds">Installed Arch Linux. Broke it 7 times. Learned more than any tutorial could teach.</div></div>
+    <div class="tl-it"><div class="tld">Mar 2026</div><div class="tlt">Discovered OpenCode Go</div><div class="tlds">Found a way to use DeepSeek V4 Flash for coding. Game changer.</div></div>
+    <div class="tl-it"><div class="tld">May 2026</div><div class="tlt">Store Launch</div><div class="tlds">Published 105 CLI tools for Litecoin. Fully automated pipeline.</div></div>
+    <div class="tl-it"><div class="tld">Now</div><div class="tlt">Still building</div><div class="tlds">Every day I write more code, build better tools, and level up.</div></div>
   </div>
 </section>
 
 <!-- ═══ CONTACT ═══ -->
-<section class="reveal" style="padding-bottom:40px;">
-  <div class="section-header">
-    <span class="section-number">05</span>
-    <span class="section-title">Connect</span>
-    <span class="section-line"></span>
-  </div>
-  <div class="contact-links">
+<section class="rv" style="padding-bottom:40px;">
+  <div class="sh"><span class="sn">07</span><span class="st">Connect</span><span class="sl"></span></div>
+  <div class="cl">
     <a href="/store">Store</a>
     <a href="https://github.com/pxdays">GitHub</a>
     <a href="mailto:pxdays@users.noreply.github.com">Email</a>
@@ -894,127 +400,159 @@ footer .heart { color: var(--pink); }
 </div>
 
 <footer>
-  <p>built with <span class="heart">♥</span> and too much tea · joshua · 2026</p>
-  <p style="margin-top:4px;">all tools include full source code · <a href="/store" style="color:var(--accent);text-decoration:none;">visit the store</a></p>
+  <p>built with <span class="hrt">♥</span> and too much tea · joshua · 2026</p>
+  <p style="margin-top:4px;">all tools include full source code · <a href="/store">visit the store</a></p>
 </footer>
 
 <script>
 // ──── Particles ────
-const c = document.getElementById('particles');
-const ctx = c.getContext('2d');
-let W, H, dots = [], mouse = { x: -1000, y: -1000 };
+const cp = document.getElementById('particles');
+const cx = cp.getContext('2d');
+let W, H, dots = [], mx = -1000, my = -1000;
 
-function resizeP() {
-  W = c.width = window.innerWidth;
-  H = c.height = window.innerHeight;
+function rs() { W=cp.width=window.innerWidth; H=cp.height=window.innerHeight; }
+function it() {
+  dots=[];
+  for(let i=0;i<50;i++) dots.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.4,dx:(Math.random()-0.5)*0.15,dy:(Math.random()-0.5)*0.15});
 }
-
-function initP() {
-  dots = [];
-  for (let i = 0; i < 50; i++) {
-    dots.push({
-      x: Math.random() * W, y: Math.random() * H,
-      r: Math.random() * 1.5 + 0.4,
-      dx: (Math.random() - 0.5) * 0.15,
-      dy: (Math.random() - 0.5) * 0.15,
-      baseR: Math.random() * 1.5 + 0.4
-    });
-  }
-}
-
-function drawP() {
-  ctx.clearRect(0, 0, W, H);
-  dots.forEach(d => {
-    d.x += d.dx; d.y += d.dy;
-    if (d.x < -20) d.x = W + 20; if (d.x > W + 20) d.x = -20;
-    if (d.y < -20) d.y = H + 20; if (d.y > H + 20) d.y = -20;
-    
-    // Mouse repulsion
-    const mdx = d.x - mouse.x, mdy = d.y - mouse.y;
-    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-    if (mdist < 80) {
-      d.x += mdx / mdist * 1.5;
-      d.y += mdy / mdist * 1.5;
-    }
-    
-    ctx.beginPath();
-    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.04)';
-    ctx.fill();
+function dr() {
+  cx.clearRect(0,0,W,H);
+  dots.forEach(d=>{
+    d.x+=d.dx;d.y+=d.dy;
+    if(d.x<-20)d.x=W+20;if(d.x>W+20)d.x=-20;
+    if(d.y<-20)d.y=H+20;if(d.y>H+20)d.y=-20;
+    const mdx=d.x-mx,mdy=d.y-my,md=Math.sqrt(mdx*mdx+mdy*mdy);
+    if(md<80){d.x+=mdx/md*1.5;d.y+=mdy/md*1.5}
+    cx.beginPath();cx.arc(d.x,d.y,d.r,0,Math.PI*2);cx.fillStyle='rgba(255,255,255,0.04)';cx.fill();
   });
-  for (let i = 0; i < dots.length; i++) {
-    for (let j = i + 1; j < dots.length; j++) {
-      const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
-        ctx.beginPath();
-        ctx.moveTo(dots[i].x, dots[i].y);
-        ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.strokeStyle = `rgba(255,255,255,${0.015 * (1 - dist / 120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
+  for(let i=0;i<dots.length;i++) for(let j=i+1;j<dots.length;j++) {
+    const dx=dots[i].x-dots[j].x,dy=dots[i].y-dots[j].y,di=Math.sqrt(dx*dx+dy*dy);
+    if(di<120){cx.beginPath();cx.moveTo(dots[i].x,dots[i].y);cx.lineTo(dots[j].x,dots[j].y);cx.strokeStyle=`rgba(255,255,255,${0.015*(1-di/120)})`;cx.lineWidth=0.5;cx.stroke();}
   }
-  requestAnimationFrame(drawP);
+  requestAnimationFrame(dr);
 }
+rs();it();dr();
+window.addEventListener('resize',()=>{rs();it();});
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
 
-resizeP(); initP(); drawP();
-window.addEventListener('resize', () => { resizeP(); initP(); });
-document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-// ──── Nav scroll ────
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 50);
-});
+// ──── Nav ────
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>50));
 
 // ──── Scroll reveal ────
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.08 });
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vs');if(e.target.classList.contains('skill-bar'))e.target.querySelector('.sb-fi').style.width=e.target.querySelector('.sb-fi').style.width||'var(--pct)'}})},{threshold:0.08});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// ──── Animate counters ────
+function animateCounter(el, target, suffix='') {
+  if(!el) return;
+  const dur=1500, start=performance.now();
+  function update(now) {
+    const p=Math.min((now-start)/dur,1), val=Math.floor(p*target);
+    el.textContent=val.toLocaleString()+suffix;
+    if(p<1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
 
-// ──── Load data from store ────
+// ──── Load data ────
+let allTools = [];
+
 (async () => {
   try {
     const res = await fetch('https://pxdays.github.io/store/tools.json');
     const tools = await res.json();
-    
-    const grid = document.getElementById('toolsGrid');
-    const total = tools.reduce((a, t) => a + t.price, 0);
+    allTools = tools;
+    const total = tools.reduce((a,t)=>a+t.price,0);
     const lines = tools.length * 85 + Math.floor(Math.random() * 200);
     
-    // Stats
-    document.getElementById('statTools').textContent = tools.length;
-    document.getElementById('statValue').textContent = '$' + total;
-    document.getElementById('statAge').textContent = lines.toLocaleString();
+    animateCounter(document.getElementById('sTools'), tools.length);
+    animateCounter(document.getElementById('sValue'), total, '+');
+    animateCounter(document.getElementById('sCode'), lines);
     
-    // Terminal
+    document.getElementById('liveStatus').textContent = `⚡ ${tools.length} tools live - $${total} total value`;
     document.getElementById('termCount').textContent = tools.length + ' tools';
-    document.getElementById('termValue').textContent = '$' + total + ' USD · ' + tools.length + ' products';
+    document.getElementById('termValue').textContent = '$' + total + ' USD across ' + tools.length + ' products';
+    document.getElementById('termNext').textContent = 'all 105 tools completed. cron auto-adds more every 6h.';
+    document.getElementById('toolCount').textContent = `showing ${tools.length} tools`;
     
-    // Tools grid — show 8 newest
-    const display = tools.slice(-8).reverse();
-    grid.innerHTML = display.map(t => `
-      <a href="/store" class="tool-card">
-        <div class="tc-name">${t.name}</div>
-        <div class="tc-desc">${t.desc || 'CLI utility'}</div>
-        <div class="tc-bottom">
-          <span class="tc-price">$${t.price}</span>
-          <span class="tc-arrow">→</span>
-        </div>
+    // Featured (highest priced)
+    const featured = [...tools].sort((a,b)=>b.price-a.price).slice(0,6);
+    document.getElementById('featuredGrid').innerHTML = featured.map(t => `
+      <a href="/store" class="tc-ft">
+        <div class="tcn">${t.name}</div>
+        <div class="tcd">${t.desc || 'CLI utility'}</div>
+        <div class="tcb"><span class="tcp">$${t.price}</span><span class="tca">→</span></div>
       </a>
     `).join('');
+    
+    // All tools
+    renderAllTools(tools);
+    
+    // Activity graph (simulated)
+    const graph = document.getElementById('actGraph');
+    const days = 30;
+    let bars = '';
+    for(let i=0;i<days;i++) {
+      const h = Math.max(4, Math.floor(Math.random() * 70 + 10));
+      const color = h > 60 ? 'var(--green)' : h > 40 ? 'var(--accent)' : h > 20 ? 'var(--border2)' : 'var(--border)';
+      bars += `<div class="act-bar" style="height:${h}px;background:${color};"><span class="act-tip">${h} builds</span></div>`;
+    }
+    graph.innerHTML = bars;
+    
   } catch(e) {
-    document.getElementById('toolsGrid').innerHTML = '<div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;">could not load tools</div>';
-    document.getElementById('termCount').textContent = '—';
-    document.getElementById('termValue').textContent = '—';
+    document.getElementById('sTools').textContent = '—';
+    document.getElementById('sValue').textContent = '—';
+    document.getElementById('sCode').textContent = '—';
+    document.getElementById('liveStatus').textContent = '⚡ could not load live data';
   }
 })();
+
+// ──── Tool filter + sort ────
+let currentSort = 'newest';
+let currentFilter = '';
+
+function renderAllTools(tools) {
+  const grid = document.getElementById('allToolsGrid');
+  let filtered = [...tools];
+  
+  // Apply search
+  if(currentFilter) {
+    const q = currentFilter.toLowerCase();
+    filtered = filtered.filter(t => t.name.toLowerCase().includes(q));
+  }
+  
+  // Apply sort
+  if(currentSort === 'alpha') filtered.sort((a,b) => a.name.localeCompare(b.name));
+  else if(currentSort === 'price') filtered.sort((a,b) => b.price - a.price);
+  else filtered.reverse(); // newest first (original order is oldest first)
+  
+  document.getElementById('toolCount').textContent = `showing ${filtered.length} of ${tools.length} tools`;
+  
+  if(filtered.length === 0) {
+    grid.innerHTML = '<div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;padding:40px 0;">no tools match your search</div>';
+    return;
+  }
+  
+  grid.innerHTML = filtered.map(t => `
+    <a href="/store" class="tc-sm">
+      <div class="tsn">${t.name}</div>
+      <div class="tsp">$${t.price}</div>
+    </a>
+  `).join('');
+}
+
+window.filterTools = function() {
+  currentFilter = document.getElementById('toolSearch').value;
+  renderAllTools(allTools);
+};
+
+window.sortTools = function(sort, el) {
+  currentSort = sort;
+  document.querySelectorAll('.tfc').forEach(e => e.classList.remove('act'));
+  el.classList.add('act');
+  renderAllTools(allTools);
+};
 </script>
 </body>
 </html>
