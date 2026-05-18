@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joshua · maker of things</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --bg: #080a0e;
+  --surface: #0e1117;
+  --card: #131822;
+  --border: #1c2333;
+  --border2: #28304a;
+  --text: #e8eaee;
+  --sub: #8b95a8;
+  --dim: #4a5268;
+  --accent: #7c9aff;
+  --acc-glow: rgba(124,154,255,0.06);
+  --green: #4ade80;
+  --radius: 14px;
+  --rad-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Ambient background ── */
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(124,154,255,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(74,222,128,0.02) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 20% 70%, rgba(124,154,255,0.015) 0%, transparent 50%);
+}
+
+canvas#particles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ── Container ── */
+.container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Nav ── */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 80px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.05em;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 24px; }
+
+.nav-links a {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.82em;
+  font-weight: 500;
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+/* ── Hero ── */
+.hero {
+  margin-bottom: 100px;
+  position: relative;
+}
+
+.hero .label {
+  font-size: 0.72em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin-bottom: 16px;
+  animation: fadeUp 0.8s ease;
+}
+
+.hero h1 {
+  font-size: 3.4em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  animation: fadeUp 0.8s ease 0.1s both;
+}
+
+.hero h1 .grad {
+  background: linear-gradient(135deg, #7c9aff 0%, #a78bfa 40%, #f5c842 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero .sub {
+  font-size: 1.05em;
+  color: var(--sub);
+  max-width: 480px;
+  line-height: 1.7;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+
+.hero .sub em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #6a88f0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124,154,255,0.2);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--sub);
+}
+
+.btn-secondary:hover {
+  border-color: var(--border2);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+/* ── Section ── */
+.section {
+  margin-bottom: 80px;
+}
+
+.section-label {
+  font-size: 0.68em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Bio ── */
+.bio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.bio-text p {
+  font-size: 0.92em;
+  color: var(--sub);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.bio-text strong { color: var(--text); font-weight: 600; }
+
+.bio-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bio-stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--rad-sm);
+  padding: 18px;
+  text-align: center;
+}
+
+.bio-stat .n {
+  font-size: 1.6em;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.bio-stat .n.gr { color: var(--green); }
+.bio-stat .l {
+  font-size: 0.72em;
+  color: var(--dim);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* ── Tools grid ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.tool-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--rad-sm);
+  padding: 18px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-item::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(var(--rad-sm) + 1px);
+  background: linear-gradient(135deg, rgba(124,154,255,0.05), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.tool-item:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.tool-item:hover::before { opacity: 1; }
+
+.tool-item > * { position: relative; z-index: 1; }
+
+.tool-item .ti {
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tool-item .td {
+  font-size: 0.72em;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.tool-item .tp {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: var(--green);
+  margin-top: 8px;
+}
+
+/* ── Contact ── */
+.contact-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.contact-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sub);
+  font-size: 0.82em;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.contact-links a:hover {
+  border-color: var(--border2);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 40px 0 60px;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-size: 0.78em;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .hero h1 { font-size: 2.2em; }
+  .bio { grid-template-columns: 1fr; }
+  .bio-stats { grid-template-columns: 1fr 1fr; }
+  .tools-grid { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  nav { margin-bottom: 48px; }
+}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<canvas id="particles"></canvas>
+
+<div class="container">
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="logo">joshua<span>.</span></a>
+  <div class="nav-links">
+    <a href="#work">work</a>
+    <a href="#about">about</a>
+    <a href="/store">store</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="label">Joshua · 15 · UK</div>
+  <h1>i make things<br>that live in <span class="grad">the terminal</span></h1>
+  <p class="sub">CLI tools for developers, sysadmins, and anyone who <em>types before they click</em>. All built with care, sold for Litecoin.</p>
+  <div class="hero-actions">
+    <a href="/store" class="btn btn-primary">Browse Store →</a>
+    <a href="#work" class="btn btn-secondary">See My Work</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="section reveal" id="about">
+  <div class="section-label">about</div>
+  <div class="bio">
+    <div class="bio-text">
+      <p>I'm <strong>Joshua</strong>, a 15-year-old developer from the UK. I build CLI tools and utilities for people who live in the terminal — developers, sysadmins, security folks, and power users.</p>
+      <p>Every tool is built with <strong>DeepSeek V4 Flash</strong>, tested for syntax errors, packaged with source code, and published to my <a href="/store" style="color:var(--accent);text-decoration:none;">store</a>. No subscriptions, no DRM, no accounts. Pay once in Litecoin, own it forever.</p>
+      <p>I'm self-taught and learning more every day. This is what I build.</p>
+    </div>
+    <div class="bio-stats">
+      <div class="bio-stat">
+        <div class="n" id="toolCount">40</div>
+        <div class="l">tools built</div>
+      </div>
+      <div class="bio-stat">
+        <div class="n" id="totalVal">—</div>
+        <div class="l">total value</div>
+      </div>
+      <div class="bio-stat">
+        <div class="n gr">LTC</div>
+        <div class="l">payments accepted</div>
+      </div>
+      <div class="bio-stat">
+        <div class="n gr" id="since">—</div>
+        <div class="l">building since</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tools -->
+<div class="section reveal" id="work">
+  <div class="section-label">tools i've built</div>
+  <div class="tools-grid" id="toolsGrid">
+    <div style="color:var(--dim);font-size:0.85em;">loading...</div>
+  </div>
+</div>
+
+<!-- Contact -->
+<div class="section reveal">
+  <div class="section-label">find me</div>
+  <div class="contact-links">
+    <a href="/store">Store</a>
+    <a href="https://github.com/pxdays">GitHub</a>
+    <a href="mailto:pxdays@users.noreply.github.com">Email</a>
+  </div>
+</div>
+
+<footer>
+  <p>Joshua · UK · 2026</p>
+  <p style="margin-top:4px;">built with a keyboard and a lot of tea</p>
+</footer>
+
+</div>
+
+<script>
+// ── Particles ──
+const c = document.getElementById('particles');
+const ctx = c.getContext('2d');
+let W, H, dots = [];
+
+function resize() {
+  W = c.width = window.innerWidth;
+  H = c.height = window.innerHeight;
+}
+
+function init() {
+  dots = [];
+  for (let i = 0; i < 40; i++) {
+    dots.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.3,
+      dx: (Math.random() - 0.5) * 0.12,
+      dy: (Math.random() - 0.5) * 0.12
+    });
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  dots.forEach(d => {
+    d.x += d.dx; d.y += d.dy;
+    if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+    if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fill();
+  });
+  for (let i = 0; i < dots.length; i++) {
+    for (let j = i + 1; j < dots.length; j++) {
+      const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.moveTo(dots[i].x, dots[i].y);
+        ctx.lineTo(dots[j].x, dots[j].y);
+        ctx.strokeStyle = `rgba(255,255,255,${0.015 * (1 - dist / 100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(draw);
+}
+
+resize(); init(); draw();
+window.addEventListener('resize', () => { resize(); init(); });
+
+// ── Scroll reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Load tools from store API ──
+(async () => {
+  try {
+    const res = await fetch('https://pxdays.github.io/store/tools.json');
+    const tools = await res.json();
+    
+    const grid = document.getElementById('toolsGrid');
+    const count = document.getElementById('toolCount');
+    const totalVal = document.getElementById('totalVal');
+    const since = document.getElementById('since');
+    
+    count.textContent = tools.length;
+    const total = tools.reduce((a, t) => a + t.price, 0);
+    totalVal.textContent = '$' + total;
+    since.textContent = 'May 2026';
+    
+    // Show last 30 tools
+    const display = tools.slice(-30).reverse();
+    grid.innerHTML = display.map(t => `
+      <a href="/store" class="tool-item">
+        <div class="ti">${t.name}</div>
+        <div class="td">${t.desc || 'CLI utility'}</div>
+        <div class="tp">$${t.price}</div>
+      </a>
+    `).join('');
+  } catch (e) {
+    document.getElementById('toolsGrid').innerHTML = '<div style="color:var(--dim);font-size:0.85em;">could not load tools</div>';
+  }
+})();
+</script>
+</body>
+</html>
