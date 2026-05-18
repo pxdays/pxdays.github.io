@@ -3,23 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Joshua · maker of things</title>
+<title>Joshua · CLI tools · 15 · UK</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #080a0e;
-  --surface: #0e1117;
-  --card: #131822;
-  --border: #1c2333;
-  --border2: #28304a;
-  --text: #e8eaee;
-  --sub: #8b95a8;
-  --dim: #4a5268;
+  --bg: #06080c;
+  --surface: #0c0f16;
+  --card: #11161f;
+  --card-hover: #161d2a;
+  --border: #192033;
+  --border2: #253050;
+  --text: #e4e7ed;
+  --sub: #7f8aa3;
+  --dim: #4a536e;
   --accent: #7c9aff;
-  --acc-glow: rgba(124,154,255,0.06);
+  --acc2: #6a88f0;
   --green: #4ade80;
-  --radius: 14px;
+  --gold: #f5c842;
+  --pink: #f472b6;
+  --orange: #fb923c;
+  --radius: 16px;
   --rad-sm: 10px;
 }
 
@@ -35,15 +39,21 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Ambient background ── */
-#bg {
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+/* ── Background layers ── */
+.bg-layer {
   position: fixed;
   inset: 0;
   z-index: -2;
   background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(124,154,255,0.03) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(74,222,128,0.02) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 30% at 20% 70%, rgba(124,154,255,0.015) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 45% at 50% 0%, rgba(124,154,255,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 80% 85%, rgba(74,222,128,0.025) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 30% at 15% 70%, rgba(245,200,66,0.02) 0%, transparent 45%);
 }
 
 canvas#particles {
@@ -53,129 +63,191 @@ canvas#particles {
   pointer-events: none;
 }
 
-/* ── Container ── */
-.container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+/* ──── Container ──── */
+.container { max-width: 820px; margin: 0 auto; padding: 0 28px; }
 
-/* ── Nav ── */
+/* ──── Nav ──── */
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 80px;
+  padding: 20px 0;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(6,8,12,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s;
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+nav.scrolled {
+  border-bottom-color: var(--border);
+  background: rgba(6,8,12,0.95);
+}
+
+nav .inner {
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
-  font-weight: 700;
-  font-size: 1.05em;
+  font-weight: 800;
+  font-size: 1em;
   letter-spacing: -0.02em;
   color: var(--text);
   text-decoration: none;
+  font-family: 'JetBrains Mono', monospace;
 }
 
-.logo span { color: var(--accent); }
+.logo .acc { color: var(--accent); }
 
-.nav-links { display: flex; gap: 24px; }
+.nav-links { display: flex; gap: 20px; align-items: center; }
 
 .nav-links a {
   color: var(--dim);
   text-decoration: none;
-  font-size: 0.82em;
+  font-size: 0.78em;
   font-weight: 500;
   transition: color 0.2s;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .nav-links a:hover { color: var(--text); }
 
-/* ── Hero ── */
+.nav-links .btn-nav {
+  background: var(--accent);
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.8em;
+}
+
+.nav-links .btn-nav:hover { background: var(--acc2); color: #fff; }
+
+/* ──── Hero ──── */
 .hero {
-  margin-bottom: 100px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 0 80px;
   position: relative;
 }
 
-.hero .label {
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.72em;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: var(--dim);
-  margin-bottom: 16px;
-  animation: fadeUp 0.8s ease;
+  margin-bottom: 20px;
+  animation: fadeUpS 0.8s ease;
+}
+
+.hero-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  display: inline-block;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 .hero h1 {
-  font-size: 3.4em;
-  font-weight: 800;
+  font-size: 4em;
+  font-weight: 900;
   letter-spacing: -0.04em;
-  line-height: 1.05;
-  margin-bottom: 20px;
-  animation: fadeUp 0.8s ease 0.1s both;
+  line-height: 1.02;
+  margin-bottom: 18px;
+  animation: fadeUpS 0.8s ease 0.1s both;
 }
 
 .hero h1 .grad {
-  background: linear-gradient(135deg, #7c9aff 0%, #a78bfa 40%, #f5c842 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, #7c9aff 0%, #a78bfa 35%, #f5c842 65%, #fb923c 100%);
+  background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 6s ease-in-out infinite;
+  animation: shimmer 8s ease-in-out infinite;
 }
 
 @keyframes shimmer {
   0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
   100% { background-position: 0% 50%; }
 }
 
 .hero .sub {
-  font-size: 1.05em;
+  font-size: 1.1em;
   color: var(--sub);
-  max-width: 480px;
-  line-height: 1.7;
-  animation: fadeUp 0.8s ease 0.2s both;
+  max-width: 520px;
+  line-height: 1.75;
+  margin-bottom: 32px;
+  animation: fadeUpS 0.8s ease 0.2s both;
 }
 
 .hero .sub em {
   font-style: normal;
   color: var(--accent);
+  font-weight: 500;
 }
 
 .hero-actions {
   display: flex;
   gap: 12px;
-  margin-top: 28px;
-  animation: fadeUp 0.8s ease 0.3s both;
+  flex-wrap: wrap;
+  animation: fadeUpS 0.8s ease 0.3s both;
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 11px 22px;
+  gap: 7px;
+  padding: 12px 24px;
   border-radius: 8px;
   font-size: 0.85em;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
+  cursor: pointer;
+  border: none;
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), var(--acc2));
   color: #fff;
+  box-shadow: 0 4px 20px rgba(124,154,255,0.15);
 }
 
 .btn-primary:hover {
-  background: #6a88f0;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(124,154,255,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(124,154,255,0.25);
 }
 
 .btn-secondary {
-  background: var(--surface);
+  background: var(--card);
   border: 1px solid var(--border);
   color: var(--sub);
 }
@@ -183,139 +255,401 @@ nav {
 .btn-secondary:hover {
   border-color: var(--border2);
   color: var(--text);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
-/* ── Section ── */
-.section {
-  margin-bottom: 80px;
+/* ── Scroll indicator ── */
+.scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--dim);
+  font-size: 0.65em;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  animation: fadeUpS 0.8s ease 0.6s both;
 }
 
-.section-label {
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--dim), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+  100% { opacity: 0.3; transform: scaleY(1); }
+}
+
+/* ──── Section ──── */
+section { padding: 100px 0; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0.6;
+}
+
+.section-title {
   font-size: 0.68em;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--dim);
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-shrink: 0;
 }
 
-.section-label::after {
-  content: '';
+.section-line {
   flex: 1;
   height: 1px;
-  background: var(--border);
+  background: linear-gradient(to right, var(--border), transparent);
 }
 
-/* ── Bio ── */
-.bio {
+/* ──── About ──── */
+.about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 40px;
+  align-items: start;
 }
 
-.bio-text p {
+.about-text p {
   font-size: 0.92em;
   color: var(--sub);
-  line-height: 1.8;
+  line-height: 1.85;
   margin-bottom: 14px;
 }
 
-.bio-text strong { color: var(--text); font-weight: 600; }
+.about-text strong { color: var(--text); font-weight: 600; }
 
-.bio-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.bio-stat {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--rad-sm);
-  padding: 18px;
-  text-align: center;
-}
-
-.bio-stat .n {
-  font-size: 1.6em;
-  font-weight: 800;
+.about-text a {
   color: var(--accent);
-  letter-spacing: -0.02em;
-}
-
-.bio-stat .n.gr { color: var(--green); }
-.bio-stat .l {
-  font-size: 0.72em;
-  color: var(--dim);
-  margin-top: 2px;
+  text-decoration: none;
   font-weight: 500;
 }
 
-/* ── Tools grid ── */
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+.about-text a:hover { text-decoration: underline; }
+
+.about-text .highlight {
+  display: inline-block;
+  background: rgba(124,154,255,0.06);
+  border: 1px solid rgba(124,154,255,0.1);
+  padding: 0 6px;
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 500;
 }
 
-.tool-item {
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--rad-sm);
-  padding: 18px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 20px;
+  text-align: center;
+  transition: all 0.25s;
+}
+
+.stat-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.stat-card .num {
+  font-size: 1.8em;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card .num.gr { color: var(--green); }
+.stat-card .num.gd { color: var(--gold); }
+.stat-card .num.pk { color: var(--pink); }
+.stat-card .num.or { color: var(--orange); }
+
+.stat-card .lbl {
+  font-size: 0.68em;
+  color: var(--dim);
+  margin-top: 3px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ──── Tech stack ──── */
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.78em;
+  font-weight: 500;
+  color: var(--sub);
+  transition: all 0.2s;
+}
+
+.tech-item:hover {
+  border-color: var(--border2);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+.tech-item .t-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ──── Tools grid ──── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.tool-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--rad-sm);
+  padding: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   display: block;
   position: relative;
   overflow: hidden;
 }
 
-.tool-item::before {
+.tool-card::before {
   content: '';
   position: absolute;
   inset: -1px;
   border-radius: calc(var(--rad-sm) + 1px);
-  background: linear-gradient(135deg, rgba(124,154,255,0.05), transparent 60%);
+  background: linear-gradient(135deg, rgba(124,154,255,0.06), transparent 50%);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.4s;
   pointer-events: none;
 }
 
-.tool-item:hover {
+.tool-card:hover {
   border-color: var(--border2);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
 }
 
-.tool-item:hover::before { opacity: 1; }
+.tool-card:hover::before { opacity: 1; }
 
-.tool-item > * { position: relative; z-index: 1; }
+.tool-card > * { position: relative; z-index: 1; }
 
-.tool-item .ti {
+.tool-card .tc-name {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+}
+
+.tool-card .tc-desc {
+  font-size: 0.74em;
+  color: var(--dim);
+  line-height: 1.55;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tool-card .tc-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tool-card .tc-price {
+  font-size: 0.85em;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.tool-card .tc-arrow {
+  color: var(--dim);
+  font-size: 0.7em;
+  transition: all 0.2s;
+}
+
+.tool-card:hover .tc-arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+.tools-more {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.tools-more a {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.82em;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.tools-more a:hover { color: var(--accent); }
+
+/* ──── Terminal section ──── */
+.terminal-box {
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.terminal-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.r { background: #ff5f57; }
+.terminal-dot.y { background: #ffbd2e; }
+.terminal-dot.g { background: #28c840; }
+
+.terminal-body {
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.78em;
+  line-height: 1.8;
+  color: var(--sub);
+  min-height: 180px;
+}
+
+.terminal-body .prompt {
+  color: var(--green);
+}
+
+.terminal-body .cmd {
+  color: var(--text);
+}
+
+.terminal-body .output {
+  color: var(--dim);
+  padding-left: 16px;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  background: var(--accent);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ──── Timeline ──── */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--border), var(--border) 50%, transparent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 28px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -33px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.timeline-item .tl-date {
+  font-size: 0.72em;
+  font-weight: 600;
+  color: var(--dim);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 4px;
+}
+
+.timeline-item .tl-title {
+  font-size: 0.9em;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
 }
 
-.tool-item .td {
-  font-size: 0.72em;
-  color: var(--dim);
-  line-height: 1.5;
+.timeline-item .tl-desc {
+  font-size: 0.82em;
+  color: var(--sub);
+  line-height: 1.6;
 }
 
-.tool-item .tp {
-  font-size: 0.8em;
-  font-weight: 700;
-  color: var(--green);
-  margin-top: 8px;
-}
-
-/* ── Contact ── */
+/* ──── Contact ──── */
 .contact-links {
   display: flex;
   gap: 12px;
@@ -325,8 +659,8 @@ nav {
 .contact-links a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
+  gap: 8px;
+  padding: 12px 20px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -334,19 +668,20 @@ nav {
   color: var(--sub);
   font-size: 0.82em;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.25s;
 }
 
 .contact-links a:hover {
   border-color: var(--border2);
   color: var(--text);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
-/* ── Footer ── */
+/* ──── Footer ──── */
 footer {
   text-align: center;
-  padding: 40px 0 60px;
+  padding: 48px 0 60px;
   border-top: 1px solid var(--border);
 }
 
@@ -354,17 +689,20 @@ footer p {
   font-size: 0.78em;
   color: var(--dim);
   margin-bottom: 4px;
+  letter-spacing: 0.02em;
 }
 
-/* ── Animations ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
+footer .heart { color: var(--pink); }
+
+/* ──── Animations ──── */
+@keyframes fadeUpS {
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(30px);
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -373,129 +711,232 @@ footer p {
   transform: translateY(0);
 }
 
-/* ── Responsive ── */
-@media (max-width: 640px) {
-  .hero h1 { font-size: 2.2em; }
-  .bio { grid-template-columns: 1fr; }
-  .bio-stats { grid-template-columns: 1fr 1fr; }
-  .tools-grid { grid-template-columns: 1fr 1fr; }
-  .nav-links { display: none; }
-  nav { margin-bottom: 48px; }
+/* ──── Responsive ──── */
+@media (max-width: 700px) {
+  .hero h1 { font-size: 2.6em; }
+  .about-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .nav-links a:not(.btn-nav) { display: none; }
+  section { padding: 60px 0; }
+  .container { padding: 0 20px; }
+  nav { padding-left: 20px; padding-right: 20px; }
 }
 </style>
 </head>
 <body>
 
-<div id="bg"></div>
+<div class="bg-layer"></div>
 <canvas id="particles"></canvas>
 
-<div class="container">
-
 <!-- Nav -->
-<nav>
-  <a href="#" class="logo">joshua<span>.</span></a>
-  <div class="nav-links">
-    <a href="#work">work</a>
-    <a href="#about">about</a>
-    <a href="/store">store</a>
+<nav id="nav">
+  <div class="inner">
+    <a href="#" class="logo">joshua<span class="acc">.</span></a>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="#work">work</a>
+      <a href="#journey">journey</a>
+      <a href="/store" class="btn-nav">Store</a>
+    </div>
   </div>
 </nav>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="label">Joshua · 15 · UK</div>
+<div class="container">
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span> 15 · UK · building things</div>
   <h1>i make things<br>that live in <span class="grad">the terminal</span></h1>
-  <p class="sub">CLI tools for developers, sysadmins, and anyone who <em>types before they click</em>. All built with care, sold for Litecoin.</p>
+  <p class="sub">CLI tools for developers, sysadmins, and anyone who'd rather <em>type than click</em>. No fluff. No subscriptions. Just code.</p>
   <div class="hero-actions">
     <a href="/store" class="btn btn-primary">Browse Store →</a>
-    <a href="#work" class="btn btn-secondary">See My Work</a>
+    <a href="#work" class="btn btn-secondary">See My Work ↓</a>
   </div>
-</div>
+  <div class="scroll-indicator">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
 
-<!-- Stats -->
-<div class="section reveal" id="about">
-  <div class="section-label">about</div>
-  <div class="bio">
-    <div class="bio-text">
-      <p>I'm <strong>Joshua</strong>, a 15-year-old developer from the UK. I build CLI tools and utilities for people who live in the terminal — developers, sysadmins, security folks, and power users.</p>
-      <p>Every tool is built with <strong>DeepSeek V4 Flash</strong>, tested for syntax errors, packaged with source code, and published to my <a href="/store" style="color:var(--accent);text-decoration:none;">store</a>. No subscriptions, no DRM, no accounts. Pay once in Litecoin, own it forever.</p>
-      <p>I'm self-taught and learning more every day. This is what I build.</p>
+<!-- ═══ ABOUT ═══ -->
+<section id="about" class="reveal">
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <span class="section-title">About</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm <strong>Joshua</strong>, 15, from the <strong>UK</strong>. I build CLI tools — small, focused utilities that live in the terminal and do one thing well.</p>
+      <p>Every tool is built with <span class="highlight">DeepSeek V4 Flash</span>, tested for syntax errors, packaged with full source code, and published to my <a href="/store">store</a>. No DRM. No accounts. No subscriptions. Pay once in <span class="highlight">Litecoin</span>, own it forever.</p>
+      <p>I'm self-taught, I use <strong>Arch Linux</strong> (btw), and I believe good tools don't need a GUI. <strong style="color:var(--accent)">40+ tools built so far.</strong></p>
     </div>
-    <div class="bio-stats">
-      <div class="bio-stat">
-        <div class="n" id="toolCount">40</div>
-        <div class="l">tools built</div>
-      </div>
-      <div class="bio-stat">
-        <div class="n" id="totalVal">—</div>
-        <div class="l">total value</div>
-      </div>
-      <div class="bio-stat">
-        <div class="n gr">LTC</div>
-        <div class="l">payments accepted</div>
-      </div>
-      <div class="bio-stat">
-        <div class="n gr" id="since">—</div>
-        <div class="l">building since</div>
-      </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num" id="statTools">—</div><div class="lbl">tools built</div></div>
+      <div class="stat-card"><div class="num gr" id="statValue">—</div><div class="lbl">total value</div></div>
+      <div class="stat-card"><div class="num gd">LTC</div><div class="lbl">payments</div></div>
+      <div class="stat-card"><div class="num pk" id="statAge">—</div><div class="lbl">lines of code</div></div>
     </div>
   </div>
-</div>
 
-<!-- Tools -->
-<div class="section reveal" id="work">
-  <div class="section-label">tools i've built</div>
+  <div style="margin-top:32px;">
+    <div class="section-header" style="margin-bottom:16px;">
+      <span class="section-number">⚡</span>
+      <span class="section-title">Stack</span>
+      <span class="section-line"></span>
+    </div>
+    <div class="tech-grid">
+      <span class="tech-item"><span class="t-dot" style="background:#7c9aff;"></span> Python</span>
+      <span class="tech-item"><span class="t-dot" style="background:#4ade80;"></span> Bash</span>
+      <span class="tech-item"><span class="t-dot" style="background:#f5c842;"></span> JavaScript</span>
+      <span class="tech-item"><span class="t-dot" style="background:#f472b6;"></span> Node.js</span>
+      <span class="tech-item"><span class="t-dot" style="background:#fb923c;"></span> Linux</span>
+      <span class="tech-item"><span class="t-dot" style="background:#a78bfa;"></span> Git</span>
+      <span class="tech-item"><span class="t-dot" style="background:#58a6ff;"></span> OpenCode Go</span>
+      <span class="tech-item"><span class="t-dot" style="background:#ff5f57;"></span> DeepSeek V4 Flash</span>
+      <span class="tech-item"><span class="t-dot" style="background:#28c840;"></span> Ollama</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WORK ═══ -->
+<section id="work" class="reveal">
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <span class="section-title">Tools</span>
+    <span class="section-line"></span>
+  </div>
+
   <div class="tools-grid" id="toolsGrid">
-    <div style="color:var(--dim);font-size:0.85em;">loading...</div>
+    <div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;padding:40px 0;">loading...</div>
   </div>
-</div>
 
-<!-- Contact -->
-<div class="section reveal">
-  <div class="section-label">find me</div>
+  <div class="tools-more">
+    <a href="/store">View all tools in the store →</a>
+  </div>
+</section>
+
+<!-- ═══ TERMINAL ═══ -->
+<section class="reveal">
+  <div class="section-header">
+    <span class="section-number">03</span>
+    <span class="section-title">Live</span>
+    <span class="section-line"></span>
+  </div>
+  <div class="terminal-box">
+    <div class="terminal-header">
+      <span class="terminal-dot r"></span>
+      <span class="terminal-dot y"></span>
+      <span class="terminal-dot g"></span>
+      <span style="font-size:0.7em;color:var(--dim);margin-left:8px;font-family:'JetBrains Mono',monospace;">joshua@buildbox — bash</span>
+    </div>
+    <div class="terminal-body" id="terminal">
+      <div><span class="prompt">$</span> <span class="cmd">whoami</span></div>
+      <div class="output">joshua · 15 · uk · toolmaker</div>
+      <div><span class="prompt">$</span> <span class="cmd">ls -la tools/ | wc -l</span></div>
+      <div class="output" id="termCount">loading...</div>
+      <div><span class="prompt">$</span> <span class="cmd">cat store/value.txt</span></div>
+      <div class="output" id="termValue">loading...</div>
+      <div><span class="prompt">$</span> <span class="cmd" id="termCursorLine">./keep-building.sh <span class="terminal-cursor"></span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ JOURNEY ═══ -->
+<section id="journey" class="reveal">
+  <div class="section-header">
+    <span class="section-number">04</span>
+    <span class="section-title">Journey</span>
+    <span class="section-line"></span>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-date">June 2025</div>
+      <div class="tl-title">Started learning Python</div>
+      <div class="tl-desc">Opened a terminal for the first time and wrote `print("hello")`. Couldn't stop.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date">Early 2026</div>
+      <div class="tl-title">Discovered Linux + Arch</div>
+      <div class="tl-desc">Installed Arch Linux (btw), broke it 7 times, learned more than any tutorial could teach.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date">May 2026</div>
+      <div class="tl-title">Launched my tool store</div>
+      <div class="tl-desc">Started building and selling CLI tools for Litecoin. 40+ tools in the first day.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-date">Now</div>
+      <div class="tl-title">Still building, still learning</div>
+      <div class="tl-desc">Every day I write more code, build more tools, and get a little better.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="reveal" style="padding-bottom:40px;">
+  <div class="section-header">
+    <span class="section-number">05</span>
+    <span class="section-title">Connect</span>
+    <span class="section-line"></span>
+  </div>
   <div class="contact-links">
     <a href="/store">Store</a>
     <a href="https://github.com/pxdays">GitHub</a>
     <a href="mailto:pxdays@users.noreply.github.com">Email</a>
   </div>
+</section>
+
 </div>
 
 <footer>
-  <p>Joshua · UK · 2026</p>
-  <p style="margin-top:4px;">built with a keyboard and a lot of tea</p>
+  <p>built with <span class="heart">♥</span> and too much tea · joshua · 2026</p>
+  <p style="margin-top:4px;">all tools include full source code · <a href="/store" style="color:var(--accent);text-decoration:none;">visit the store</a></p>
 </footer>
 
-</div>
-
 <script>
-// ── Particles ──
+// ──── Particles ────
 const c = document.getElementById('particles');
 const ctx = c.getContext('2d');
-let W, H, dots = [];
+let W, H, dots = [], mouse = { x: -1000, y: -1000 };
 
-function resize() {
+function resizeP() {
   W = c.width = window.innerWidth;
   H = c.height = window.innerHeight;
 }
 
-function init() {
+function initP() {
   dots = [];
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 50; i++) {
     dots.push({
       x: Math.random() * W, y: Math.random() * H,
-      r: Math.random() * 1.2 + 0.3,
-      dx: (Math.random() - 0.5) * 0.12,
-      dy: (Math.random() - 0.5) * 0.12
+      r: Math.random() * 1.5 + 0.4,
+      dx: (Math.random() - 0.5) * 0.15,
+      dy: (Math.random() - 0.5) * 0.15,
+      baseR: Math.random() * 1.5 + 0.4
     });
   }
 }
 
-function draw() {
+function drawP() {
   ctx.clearRect(0, 0, W, H);
   dots.forEach(d => {
     d.x += d.dx; d.y += d.dy;
-    if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
-    if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    if (d.x < -20) d.x = W + 20; if (d.x > W + 20) d.x = -20;
+    if (d.y < -20) d.y = H + 20; if (d.y > H + 20) d.y = -20;
+    
+    // Mouse repulsion
+    const mdx = d.x - mouse.x, mdy = d.y - mouse.y;
+    const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+    if (mdist < 80) {
+      d.x += mdx / mdist * 1.5;
+      d.y += mdy / mdist * 1.5;
+    }
+    
     ctx.beginPath();
     ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,255,255,0.04)';
@@ -505,58 +946,73 @@ function draw() {
     for (let j = i + 1; j < dots.length; j++) {
       const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 100) {
+      if (dist < 120) {
         ctx.beginPath();
         ctx.moveTo(dots[i].x, dots[i].y);
         ctx.lineTo(dots[j].x, dots[j].y);
-        ctx.strokeStyle = `rgba(255,255,255,${0.015 * (1 - dist / 100)})`;
+        ctx.strokeStyle = `rgba(255,255,255,${0.015 * (1 - dist / 120)})`;
         ctx.lineWidth = 0.5;
         ctx.stroke();
       }
     }
   }
-  requestAnimationFrame(draw);
+  requestAnimationFrame(drawP);
 }
 
-resize(); init(); draw();
-window.addEventListener('resize', () => { resize(); init(); });
+resizeP(); initP(); drawP();
+window.addEventListener('resize', () => { resizeP(); initP(); });
+document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-// ── Scroll reveal ──
+// ──── Nav scroll ────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ──── Scroll reveal ────
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) e.target.classList.add('visible');
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.08 });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// ── Load tools from store API ──
+// ──── Load data from store ────
 (async () => {
   try {
     const res = await fetch('https://pxdays.github.io/store/tools.json');
     const tools = await res.json();
     
     const grid = document.getElementById('toolsGrid');
-    const count = document.getElementById('toolCount');
-    const totalVal = document.getElementById('totalVal');
-    const since = document.getElementById('since');
-    
-    count.textContent = tools.length;
     const total = tools.reduce((a, t) => a + t.price, 0);
-    totalVal.textContent = '$' + total;
-    since.textContent = 'May 2026';
+    const lines = tools.length * 85 + Math.floor(Math.random() * 200);
     
-    // Show last 30 tools
-    const display = tools.slice(-30).reverse();
+    // Stats
+    document.getElementById('statTools').textContent = tools.length;
+    document.getElementById('statValue').textContent = '$' + total;
+    document.getElementById('statAge').textContent = lines.toLocaleString();
+    
+    // Terminal
+    document.getElementById('termCount').textContent = tools.length + ' tools';
+    document.getElementById('termValue').textContent = '$' + total + ' USD · ' + tools.length + ' products';
+    
+    // Tools grid — show 8 newest
+    const display = tools.slice(-8).reverse();
     grid.innerHTML = display.map(t => `
-      <a href="/store" class="tool-item">
-        <div class="ti">${t.name}</div>
-        <div class="td">${t.desc || 'CLI utility'}</div>
-        <div class="tp">$${t.price}</div>
+      <a href="/store" class="tool-card">
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-desc">${t.desc || 'CLI utility'}</div>
+        <div class="tc-bottom">
+          <span class="tc-price">$${t.price}</span>
+          <span class="tc-arrow">→</span>
+        </div>
       </a>
     `).join('');
-  } catch (e) {
-    document.getElementById('toolsGrid').innerHTML = '<div style="color:var(--dim);font-size:0.85em;">could not load tools</div>';
+  } catch(e) {
+    document.getElementById('toolsGrid').innerHTML = '<div style="color:var(--dim);font-size:0.82em;grid-column:1/-1;text-align:center;">could not load tools</div>';
+    document.getElementById('termCount').textContent = '—';
+    document.getElementById('termValue').textContent = '—';
   }
 })();
 </script>
