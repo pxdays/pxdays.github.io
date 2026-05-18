@@ -214,6 +214,20 @@ section { padding:100px 0; }
 .term-c { display:inline-block; width:7px; height:15px; background:var(--accent); animation:bl 1s step-end infinite; vertical-align:text-bottom; margin-left:2px; }
 @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
 
+/* ── Extras ── */
+.extras-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:28px; transition:all 0.3s; position:relative; overflow:hidden;
+}
+.extras-card:hover { border-color:var(--border2); transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+.extras-card .ec-icon { font-size:2em; margin-bottom:10px; }
+.extras-card .ec-title { font-size:1.1em; font-weight:700; color:var(--text); margin-bottom:6px; }
+.extras-card .ec-desc { font-size:0.85em; color:var(--sub); line-height:1.7; margin-bottom:14px; }
+.extras-card .ec-meta { font-size:0.72em; color:var(--dim); margin-bottom:14px; }
+.extras-card .ec-meta span { display:inline-block; margin-right:16px; }
+.extras-card .btn-dl { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; background:var(--accent); color:#fff; border-radius:8px; text-decoration:none; font-size:0.82em; font-weight:600; transition:all 0.2s; }
+.extras-card .btn-dl:hover { background:var(--acc2); transform:translateY(-2px); box-shadow:0 6px 20px rgba(124,154,255,0.2); }
+
 /* ── Activity graph ── */
 .act-graph { display:flex; gap:3px; align-items:flex-end; height:100px; padding:16px 0; }
 .act-bar { flex:1; border-radius:2px 2px 0 0; min-height:4px; transition:all 0.3s; position:relative; cursor:pointer; }
@@ -301,6 +315,7 @@ footer a { color:var(--accent); text-decoration:none; }
     <div class="nav-links">
       <a href="#about">about</a>
       <a href="#work">work</a>
+      <a href="#extras">extras</a>
       <a href="#journey">journey</a>
       <a href="/store" class="bn">Store</a>
     </div>
@@ -398,9 +413,25 @@ footer a { color:var(--accent); text-decoration:none; }
   <div style="text-align:center;margin-top:16px;color:var(--dim);font-size:0.75em;" id="toolCount"></div>
 </section>
 
+<!-- ═══ EXTRAS ═══ -->
+<section class="rv" id="extras">
+  <div class="sh"><span class="sn">✦</span><span class="st">Extras</span><span class="sl"></span></div>
+  <div class="extras-card">
+    <div class="ec-icon">🖥️</div>
+    <div class="ec-title">Hyprland Dotfiles</div>
+    <div class="ec-desc">My personal Hyprland configuration — a polished, feature-rich desktop setup for Arch Linux. Includes custom keybinds, window rules, animations, decorations, startup apps, environment variables, and utility scripts. Every file is tested and tuned for daily use.</div>
+    <div class="ec-meta">
+      <span>📁 130+ files</span>
+      <span>⚙️ Full config suite</span>
+      <span>🐧 Arch Linux</span>
+    </div>
+    <a href="/extras/hyprland-dotfiles.zip" class="btn-dl" download>Download Dotfiles ↓</a>
+  </div>
+</section>
+
 <!-- ═══ ACTIVITY ═══ -->
 <section class="rv">
-  <div class="sh"><span class="sn">04</span><span class="st">Activity</span><span class="sl"></span></div>
+  <div class="sh"><span class="sn">05</span><span class="st">Activity</span><span class="sl"></span></div>
   <div class="term-box">
     <div class="term-h">
       <span class="term-d r"></span><span class="term-d y"></span><span class="term-d g"></span>
@@ -429,7 +460,7 @@ footer a { color:var(--accent); text-decoration:none; }
 
 <!-- ═══ ACHIEVEMENTS ═══ -->
 <section class="rv">
-  <div class="sh"><span class="sn">05</span><span class="st">Achievements</span><span class="sl"></span></div>
+  <div class="sh"><span class="sn">06</span><span class="st">Achievements</span><span class="sl"></span></div>
   <div class="ach-grid">
     <div class="ach-item"><div class="ac-icon">🚀</div><div class="ac-title">100+ Tools</div><div class="ac-desc">Built and published over 100 CLI tools in a single day</div></div>
     <div class="ach-item"><div class="ac-icon">💰</div><div class="ac-title">Crypto Payments</div><div class="ac-desc">Self-taught how to accept Litecoin without a bank account</div></div>
@@ -442,7 +473,7 @@ footer a { color:var(--accent); text-decoration:none; }
 
 <!-- ═══ JOURNEY ═══ -->
 <section class="rv" id="journey">
-  <div class="sh"><span class="sn">06</span><span class="st">Journey</span><span class="sl"></span></div>
+  <div class="sh"><span class="sn">07</span><span class="st">Journey</span><span class="sl"></span></div>
   <div class="tl">
     <div class="tl-it" style="--accent-color:var(--dim)">
       <div class="tld">Mid 2020 · COVID lockdown</div>
@@ -504,7 +535,7 @@ footer a { color:var(--accent); text-decoration:none; }
 
 <!-- ═══ CONTACT ═══ -->
 <section class="rv" style="padding-bottom:40px;">
-  <div class="sh"><span class="sn">07</span><span class="st">Connect</span><span class="sl"></span></div>
+  <div class="sh"><span class="sn">08</span><span class="st">Connect</span><span class="sl"></span></div>
   <div class="cl">
     <a href="/store">Store</a>
     <a href="https://github.com/pxdays">GitHub</a>
